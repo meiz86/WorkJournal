@@ -1,0 +1,71 @@
+<h1>Add Activity</h1>
+
+<form action="/activities/new" method="POST">
+
+    <p>
+        Date
+        <br>
+        <input type="date" name="activity_date" required>
+    </p>
+
+    <p>
+        Project
+        <br>
+        <input type="text" name="project">
+    </p>
+
+    <p>
+        Department
+        <br>
+        <input type="text" name="department">
+    </p>
+
+    <p>
+        Activity
+        <br>
+        <input type="text" name="activity" required>
+    </p>
+
+    <p>
+        Description
+        <br>
+        <textarea name="description" rows="5"></textarea>
+    </p>
+
+    <p>
+        Duration (minutes)
+        <br>
+        <input type="number" name="duration">
+    </p>
+
+    <p>
+        Status
+        <br>
+
+        <select name="status">
+
+            <% statuses.forEach(status=> { %>
+
+                <option value="<%= status %>" <%=status==="Completed" ? "selected" : "" %>>
+
+                    <%= status %>
+
+                </option>
+
+                <% }) %>
+
+        </select>
+
+    </p>
+
+    <p>
+        Remarks
+        <br>
+        <textarea name="remarks"></textarea>
+    </p>
+
+    <button type="submit">
+        Save Activity
+    </button>
+
+</form>

@@ -1,0 +1,29 @@
+{
+  "name": "workjournal",
+  "version": "1.0.0",
+  "description": "My Work Journal",
+  "keywords": [
+    "CSS",
+    "JS",
+    "NPM",
+    "NODE",
+    "EJS"
+  ],
+  "license": "ISC",
+  "author": "M3hd1 Iz",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "express-ejs-layouts": "^2.5.1",
+    "sqlite3": "^6.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

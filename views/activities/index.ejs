@@ -1,0 +1,87 @@
+<h1>Activities</h1>
+
+<p>
+    <a href="/activities/new">➕ Add Activity</a>
+</p>
+<form method="GET" action="/activities">
+
+    <input type="text" name="search" placeholder="Search..." value="<%= filters.search || '' %>">
+
+    <select name="status">
+
+        <option value="All">All</option>
+
+        <% statuses.forEach(status=> { %>
+
+            <option value="<%= status %>" <%=filters.status===status ? "selected" : "" %>>
+
+                <%= status %>
+
+            </option>
+
+            <% }) %>
+
+    </select>
+
+    <button type="submit">
+        Search
+    </button>
+
+    <a href="/activities">
+        Clear
+    </a>
+
+</form>
+
+<br>
+
+<br>
+<table border="1" cellpadding="8">
+
+    <tr>
+        <th>ID</th>
+        <th>Date</th>
+        <th>Project</th>
+        <th>Department</th>
+        <th>Activity</th>
+        <th>Duration</th>
+        <th>Status</th>
+    </tr>
+
+    <% activities.forEach(activity=> { %>
+
+        <tr>
+
+            <td>
+                <%= activity.id %>
+            </td>
+
+            <td>
+                <%= activity.activity_date %>
+            </td>
+
+            <td>
+                <%= activity.project %>
+            </td>
+
+            <td>
+                <%= activity.department %>
+            </td>
+
+            <td>
+                <%= activity.activity %>
+            </td>
+
+            <td>
+                <%= activity.duration %> min
+            </td>
+
+            <td>
+                <%= activity.status %>
+            </td>
+
+        </tr>
+
+        <% }) %>
+
+</table>

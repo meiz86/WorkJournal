@@ -1,0 +1,27 @@
+<aside class="sidebar">
+
+    <div class="logo">
+        <h2>Work Journal</h2>
+    </div>
+
+    <ul>
+
+        <% navigation.forEach(item=> { %>
+
+            <li>
+
+                <a href="<%= item.url %>">
+
+                    <i class="<%= item.icon %>"></i>
+
+                    <%= item.title %>
+
+                </a>
+
+            </li>
+
+            <% }) %>
+
+    </ul>
+
+</aside>
