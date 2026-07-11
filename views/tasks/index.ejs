@@ -1,0 +1,134 @@
+<div class="panel">
+
+    <div class="panel-header">
+
+        <h2>Tasks</h2>
+
+        <a href="/tasks/new">
+            + New Task
+        </a>
+
+    </div>
+
+    <table class="dashboard-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Title</th>
+
+                <th>Project</th>
+
+                <th>Priority</th>
+
+                <th>Status</th>
+
+                <th>Due Date</th>
+                <th>Actions</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        <% if(tasks.length===0){ %>
+
+            <tr>
+
+                <td colspan="5">
+
+                    No Tasks Yet
+
+                </td>
+
+            </tr>
+
+        <% } %>
+
+        <% tasks.forEach(task=>{ %>
+
+            <tr>
+
+                <td><%= task.title %></td>
+
+                <td><%= task.project %></td>
+
+                <td>
+                   <span class="priority-<%= task.priority.toLowerCase() %>">
+                   <%= task.priority %>
+                   </span>
+                </td>
+                <td>
+                   <span class="task-status <%= task.status.toLowerCase().replace(' ','-') %>">
+                   <%= task.status %>
+                    </span>
+                </td>
+                <td><%= task.due_date %></td>
+                <td>
+                    <a href="/tasks/<%= task.id %>/edit">Edit</a>
+             <form action="/tasks/<%= task.id %>/complete" method="POST" style="display:inline;">
+                <button type="submit">Complete</button>
+            </form>
+            <form action="/tasks/<%= task.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Delete this task?');">
+                <button type="submit">Delete</button>
+            </form>
+               </td>
+               <td class="actions">
+
+    <a
+        href="/tasks/<%= task.id %>/edit"
+        class="btn btn-primary btn-sm"
+        title="Edit">
+
+        <i class="fa-solid fa-pen"></i>
+
+    </a>
+
+    <% if (task.status !== 'Completed') { %>
+
+        <form
+            action="/tasks/<%= task.id %>/complete"
+            method="POST">
+
+            <button
+                type="submit"
+                class="btn btn-success btn-sm"
+                title="Mark as Completed">
+
+                <i class="fa-solid fa-check"></i>
+
+            </button>
+
+        </form>
+
+    <% } %>
+
+    <form
+        action="/tasks/<%= task.id %>/delete"
+        method="POST"
+        onsubmit="return confirm('Delete this task?');">
+
+        <button
+            type="submit"
+            class="btn btn-danger btn-sm"
+            title="Delete">
+
+            <i class="fa-solid fa-trash"></i>
+
+        </button>
+
+    </form>
+
+</td>
+
+            </tr>
+
+        <% }) %>
+
+        </tbody>
+
+    </table>
+
+</div>

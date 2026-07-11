@@ -1,0 +1,33 @@
+.table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  background: #fff;
+}
+
+.table th {
+  background: #f8fafc;
+
+  padding: 15px;
+
+  text-align: left;
+
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.table td {
+  padding: 15px;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.table tr:hover {
+  background: #f8fafc;
+}
+
+.actions {
+  display: flex;
+
+  gap: 8px;
+}

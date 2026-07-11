@@ -6,6 +6,7 @@ const app = express();
 const activityRoutes = require("./routes/activityRoutes");
 const navigation = require("./config/navigation");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const taskRoutes = require("./routes/taskRoutes");
 const PORT = 3000;
 
 // View Engine
@@ -26,13 +27,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/activities", activityRoutes);
 app.use("/", dashboardRoutes);
+app.use("/tasks", taskRoutes);
 
 // Static Files
 app.use(express.static(path.join(__dirname, "public")));
 
 // Layout
 app.set("layout", "layouts/main");
-
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

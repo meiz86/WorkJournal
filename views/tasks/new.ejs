@@ -1,0 +1,21 @@
+<div class="page-header">
+
+    <h1>New Task</h1>
+
+    <a href="/tasks" class="btn btn-secondary">
+
+        <i class="fa-solid fa-arrow-left"></i>
+
+        Back
+
+    </a>
+
+</div>
+
+<%- include("_form", {
+
+    action: "/tasks/new",
+
+    task: null
+
+}) %>

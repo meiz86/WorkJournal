@@ -4,7 +4,7 @@ function createActivity(activity, callback) {
   const sql = `
         INSERT INTO activities
         (
-            activity_date,
+            date,
             start_time,
             end_time,
             project,
@@ -13,7 +13,7 @@ function createActivity(activity, callback) {
             description,
             duration,
             status,
-            remarks
+            description
         )
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
@@ -21,7 +21,7 @@ function createActivity(activity, callback) {
   db.run(
     sql,
     [
-      activity.activity_date,
+      activity.date,
       activity.start_time,
       activity.end_time,
       activity.project,
@@ -30,7 +30,7 @@ function createActivity(activity, callback) {
       activity.description,
       activity.duration,
       activity.status,
-      activity.remarks,
+      activity.description,
     ],
     function (err) {
       callback(err, this.lastID);
@@ -73,9 +73,10 @@ function getActivities(filters, callback) {
   }
 
   sql += `
-        ORDER BY activity_date DESC, id DESC
+        ORDER BY date DESC, id DESC
     `;
-
+  // console.log(sql);
+  // console.log(params);
   db.all(sql, params, (err, rows) => {
     callback(err, rows);
   });

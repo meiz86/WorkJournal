@@ -1,0 +1,49 @@
+.task-status {
+  padding: 5px 12px;
+
+  border-radius: 20px;
+
+  color: #fff;
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+.pending {
+  background: #f59e0b;
+}
+
+.progress {
+  background: #3b82f6;
+}
+
+.completed {
+  background: #16a34a;
+}
+
+.priority-high {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.priority-medium {
+  color: #d97706;
+  font-weight: bold;
+}
+
+.priority-low {
+  color: #16a34a;
+  font-weight: bold;
+}
+.pending {
+  background: #f59e0b;
+}
+
+.in-progress {
+  background: #3b82f6;
+}
+
+.completed {
+  background: #16a34a;
+}

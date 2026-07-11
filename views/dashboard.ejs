@@ -1,41 +1,166 @@
-<h1>Dashboard</h1>
+<div class="page-header">
+    <h1>Dashboard</h1>
+</div>
 
-<div class="dashboard-grid">
+<!-- ===========================
+     Statistics
+============================ -->
 
-    <div class="card">
-
-        <h3>Total Activities</h3>
-
-        <h1><%= stats.totalActivities || 0 %></h1>
-
-    </div>
+<div class="stats-grid">
 
     <div class="card">
-
         <h3>Today's Activities</h3>
-
         <h1><%= stats.todayActivities || 0 %></h1>
-
     </div>
 
     <div class="card">
-
-        <h3>Total Hours</h3>
-
-        <h1>
-
-            <%= ((stats.totalMinutes || 0) / 60).toFixed(1) %>
-
-        </h1>
-
+        <h3>This Week</h3>
+        <h1><%= stats.weekActivities || 0 %></h1>
     </div>
 
     <div class="card">
-
         <h3>This Month</h3>
+        <h1><%= stats.monthActivities || 0 %></h1>
+    </div>
 
-        <h1><%= stats.totalActivities || 0 %></h1>
+    <div class="card">
+        <h3>Total Hours</h3>
+        <h1><%= ((stats.totalMinutes || 0)/60).toFixed(1) %></h1>
+    </div>
+
+</div>
+
+<!-- ===========================
+     Charts
+============================ -->
+
+<div class="charts-grid">
+
+    <div class="card chart-card">
+        <h3>Hours Worked This Week</h3>
+        <canvas id="hoursChart"></canvas>
+    </div>
+
+    <div class="card chart-card">
+        <h3>Task Status</h3>
+        <canvas id="taskChart"></canvas>
+    </div>
+
+</div>
+
+<!-- ===========================
+     Bottom Panels
+============================ -->
+
+<div class="bottom-grid">
+
+    <!-- Recent Activities -->
+
+    <div class="panel">
+
+        <div class="panel-header">
+            <h2>Recent Activities</h2>
+            <a href="/activities">View All</a>
+        </div>
+
+        <table class="dashboard-table">
+
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Project</th>
+                    <th>Activity</th>
+                    <th>Duration</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            <% if (activities.length === 0) { %>
+
+                <tr>
+                    <td colspan="5">No activities found.</td>
+                </tr>
+
+            <% } else { %>
+
+                <% activities.forEach(activity => { %>
+
+                <tr>
+                    <td><%= activity.date %></td>
+                    <td><%= activity.project %></td>
+                    <td><%= activity.activity %></td>
+                    <td><%= activity.duration %> min</td>
+                    <td><%= activity.status %></td>
+                </tr>
+
+                <% }) %>
+
+            <% } %>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <!-- Upcoming Tasks -->
+
+    <div class="panel">
+
+        <div class="panel-header">
+            <h2>Upcoming Tasks</h2>
+            <a href="/tasks">View All</a>
+        </div>
+
+        <table class="dashboard-table">
+
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Project</th>
+                    <th>Due Date</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            <% if (tasks.length === 0) { %>
+
+                <tr>
+                    <td colspan="5">No upcoming tasks.</td>
+                </tr>
+
+            <% } else { %>
+
+                <% tasks.forEach(task => { %>
+
+                <tr>
+                    <td><%= task.title %></td>
+                    <td><%= task.project %></td>
+                    <td><%= task.due_date %></td>
+                    <td><%= task.priority %></td>
+                    <td><%= task.status %></td>
+                </tr>
+
+                <% }) %>
+
+            <% } %>
+
+            </tbody>
+
+        </table>
 
     </div>
 
 </div>
+
+<script>
+window.dashboardData = {
+    hours: <%- JSON.stringify(hours || []) %>,
+    taskStatus: <%- JSON.stringify(taskStatus || []) %>
+};
+</script>

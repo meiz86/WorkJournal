@@ -1,11 +1,44 @@
-<h1>Activities</h1>
+<div class="page-header">
+
+    <div class="page-title">
+
+        <h1>
+
+            <i class="fa-solid fa-clipboard-list"></i>
+
+            Activities
+
+        </h1>
+
+        <p>
+
+            Manage your daily work activities
+
+        </p>
+
+    </div>
+
+    <a
+        href="/activities/new"
+        class="btn btn-primary">
+
+        <i class="fa-solid fa-plus"></i>
+
+        New Activity
+
+    </a>
+
+</div>
+
 
 <p>
     <a href="/activities/new">➕ Add Activity</a>
 </p>
 <form method="GET" action="/activities">
 
+    <div class="card">
     <input type="text" name="search" placeholder="Search..." value="<%= filters.search || '' %>">
+  
 
     <select name="status">
 
@@ -30,13 +63,14 @@
     <a href="/activities">
         Clear
     </a>
+      </div>    
 
 </form>
 
 <br>
 
 <br>
-<table border="1" cellpadding="8">
+<table border="1" cellpadding="8" class="table">
 
     <tr>
         <th>ID</th>
@@ -72,13 +106,43 @@
                 <%= activity.activity %>
             </td>
 
-            <td>
-                <%= activity.duration %> min
-            </td>
+          <%
 
-            <td>
-                <%= activity.status %>
-            </td>
+const h=Math.floor(activity.duration/60);
+
+const m=activity.duration%60;
+
+%>
+
+<td>
+
+<i class="fa-regular fa-clock"></i>
+
+<%= h>0 ? h+"h ":"" %><%= m %>m
+
+</td>
+
+          <td>
+
+<%
+
+let badge="badge-warning";
+
+if(activity.status==="Completed")
+badge="badge-success";
+
+if(activity.status==="In Progress")
+badge="badge-primary";
+
+%>
+
+<span class="badge <%= badge %>">
+
+<%= activity.status %>
+
+</span>
+
+</td>
 
         </tr>
 
