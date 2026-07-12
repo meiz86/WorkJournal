@@ -1,30 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+  <%- include("../partials/head") %>
 
-<%- include("../partials/head") %>
+  <body>
+    <div class="container">
+      <%- include("../partials/sidebar") %>
 
-    <body>
+      <main class="content">
+        <%- include("../partials/navbar") %>
 
-        <div class="container">
+        <section class="page-content"><%- body %></section>
+      </main>
+    </div>
 
-            <%- include("../partials/sidebar") %>
-
-                <main class="content">
-
-                    <%- include("../partials/navbar") %>
-
-                        <section class="page-content">
-
-                            <%- body %>
-
-                        </section>
-
-                </main>
-
-        </div>
-
-        <%- include("../partials/footer") %>
-
-    </body>
-
+    <%- include("../partials/footer") %>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/dashboard.js"></script>
+  </body>
 </html>

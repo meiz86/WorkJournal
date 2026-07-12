@@ -1,0 +1,210 @@
+<div class="panel">
+
+    <h2><%= dashboard.project.name %></h2>
+
+    <p>
+
+        <strong>Code:</strong>
+
+        <%= dashboard.project.code || "-" %>
+
+    </p>
+
+    <p>
+
+        <strong>Description:</strong>
+
+        <%= dashboard.project.description || "-" %>
+
+    </p>
+
+    <p>
+
+        <strong>Status:</strong>
+
+        <%= dashboard.project.is_active ? "Active" : "Inactive" %>
+
+    </p>
+
+</div>
+<div class="page-header">
+
+    <h1><%= dashboard.project.name %></h1>
+
+    <a href="/projects" class="btn btn-secondary">
+        <i class="fa-solid fa-arrow-left"></i>
+        Back
+    </a>
+
+</div>
+
+<!-- Statistics -->
+
+<div class="stats-grid">
+
+    <div class="card">
+        <h3>Activities</h3>
+        <h1><%= dashboard.project.totalActivities || 0 %></h1>
+    </div>
+
+    <div class="card">
+        <h3>Tasks</h3>
+        <h1><%= dashboard.project.totalTasks || 0 %></h1>
+    </div>
+
+    <div class="card">
+        <h3>Hours Worked</h3>
+        <h1><%= ((dashboard.project.totalMinutes || 0)/60).toFixed(1) %></h1>
+    </div>
+
+    <div class="card">
+        <h3>Completed Tasks</h3>
+        <h1><%= dashboard.project.completedTasks || 0 %></h1>
+    </div>
+
+</div>
+
+<!-- Two Panels -->
+
+<div class="bottom-grid">
+
+    <!-- Recent Activities -->
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <h2>Recent Activities</h2>
+
+        </div>
+
+        <table class="dashboard-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Date</th>
+                    <th>Activity</th>
+                    <th>Duration</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            <% if(dashboard.activities.length===0){ %>
+
+                <tr>
+
+                    <td colspan="3">
+
+                        No activities yet.
+
+                    </td>
+
+                </tr>
+
+            <% } %>
+
+            <% dashboard.activities.forEach(a=>{ %>
+
+                <tr>
+
+                    <td><%= a.date %></td>
+
+                    <td><%= a.activity %></td>
+
+                    <td><%= a.duration %> min</td>
+
+                </tr>
+
+            <% }) %>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <!-- Upcoming Tasks -->
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <h2>Tasks</h2>
+
+        </div>
+
+        <table class="dashboard-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Task</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            <% if(dashboard.tasks.length===0){ %>
+
+                <tr>
+
+                    <td colspan="3">
+
+                        No tasks.
+
+                    </td>
+
+                </tr>
+
+            <% } %>
+
+            <% dashboard.tasks.forEach(t=>{ %>
+
+                <tr>
+
+                    <td><%= t.title %></td>
+
+                    <td><%= t.priority %></td>
+
+                    <td><%= t.status %></td>
+
+                </tr>
+
+            <% }) %>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+<div class="charts-grid">
+
+    <div class="card chart-card">
+
+        <h3>Hours Timeline</h3>
+
+        <canvas id="projectHoursChart"></canvas>
+
+    </div>
+
+    <div class="card chart-card">
+
+        <h3>Task Status</h3>
+
+        <canvas id="projectTaskChart"></canvas>
+
+    </div>
+
+</div>

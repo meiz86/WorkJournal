@@ -1,6 +1,6 @@
 <div class="page-header">
-    <h1>Dashboard</h1>
 </div>
+
 
 <!-- ===========================
      Statistics
@@ -29,7 +29,35 @@
     </div>
 
 </div>
+<div class="stats-grid">
 
+    <div class="card">
+        <h3>🔥 Work Streak</h3>
+        <h1><%= kpi.streak %></h1>
+        <small>Consecutive working days</small>
+    </div>
+
+    <div class="card">
+        <h3>⭐ Top Project</h3>
+        <h2><%= kpi.topProject?.project || "N/A" %></h2>
+        <small>
+            <%= ((kpi.topProject?.minutes || 0) / 60).toFixed(1) %> hours
+        </small>
+    </div>
+
+    <div class="card">
+        <h3>⏱ Average Hours</h3>
+        <h1><%= kpi.averageHours?.avg_hours || 0 %></h1>
+        <small>Per working day</small>
+    </div>
+
+    <div class="card">
+        <h3>✅ Completion</h3>
+        <h1><%= kpi.completionRate?.rate || 0 %>%</h1>
+        <small>Tasks completed</small>
+    </div>
+
+</div>
 <!-- ===========================
      Charts
 ============================ -->
@@ -163,4 +191,6 @@ window.dashboardData = {
     hours: <%- JSON.stringify(hours || []) %>,
     taskStatus: <%- JSON.stringify(taskStatus || []) %>
 };
+
+console.log(window.dashboardData);
 </script>

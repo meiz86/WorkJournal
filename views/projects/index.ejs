@@ -1,0 +1,124 @@
+<div class="page-header">
+    
+
+    <h1>Projects</h1>
+
+    <a href="/projects/new" class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i>
+        New Project
+    </a>
+
+</div>
+
+<div class="panel">
+<div class="table-toolbar">
+
+    <input
+        type="text"
+        id="projectSearch"
+        placeholder="Search projects...">
+
+</div>
+    <table class="dashboard-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Name</th>
+               <th>Code</th>
+               <th>Status</th>
+               <th>Created</th>
+                <th>Actions</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        <% if(projects.length===0){ %>
+
+            <tr>
+
+                <td colspan="6">
+                    No projects found.
+                </td>
+
+            </tr>
+
+        <% } %>
+
+        <% projects.forEach(project=>{ %>
+
+            <tr>
+
+                <td>
+<span
+    class="project-color"
+    style="background:<%= project.color || '#2563eb' %>">
+</span>
+    <span class="project-color"></span>
+
+    <a href="/projects/<%= project.id %>">
+
+        <%= project.name %>
+
+    </a>
+
+</td>
+
+                <td><%= project.code || "-" %></td>
+
+              <td>
+
+    <% if(project.is_active){ %>
+
+        <span class="status-badge status-active">
+
+            Active
+
+        </span>
+
+    <% }else{ %>
+
+        <span class="status-badge status-inactive">
+
+            Inactive
+
+        </span>
+
+    <% } %>
+
+</td>
+
+<td><%= project.created_at.substring(0,10) %></td>
+                <td><%= project.end_date || "-" %></td>
+
+                <td>
+
+                    <a href="/projects/edit/<%= project.id %>" class="btn-edit">
+
+                        <i class="fa-solid fa-pen"></i>
+
+                    </a>
+
+                    <a href="/projects/delete/<%= project.id %>"
+                       class="btn-delete"
+                       onclick="return confirm('Delete this project?')">
+
+                        <i class="fa-solid fa-trash"></i>
+
+                    </a>
+
+                </td>
+
+            </tr>
+
+        <% }) %>
+
+        </tbody>
+
+    </table>
+
+</div>

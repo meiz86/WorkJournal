@@ -53,4 +53,18 @@ CREATE TABLE IF NOT EXISTS projects (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
     `);
+
+  db.run(`
+      CREATE TABLE IF NOT EXISTS projects (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    client TEXT,
+    description TEXT,
+    color TEXT DEFAULT '#2563eb',
+    start_date TEXT,
+    end_date TEXT,
+    status TEXT DEFAULT 'Active',
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+`);
 });

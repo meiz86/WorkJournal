@@ -7,6 +7,7 @@ const activityRoutes = require("./routes/activityRoutes");
 const navigation = require("./config/navigation");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const taskRoutes = require("./routes/taskRoutes");
+const projectRoutes = require("./routes/projects");
 const PORT = 3000;
 
 // View Engine
@@ -28,6 +29,7 @@ app.use(express.json());
 app.use("/activities", activityRoutes);
 app.use("/", dashboardRoutes);
 app.use("/tasks", taskRoutes);
+app.use("/projects", projectRoutes);
 
 // Static Files
 app.use(express.static(path.join(__dirname, "public")));

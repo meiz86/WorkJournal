@@ -4,7 +4,11 @@ const navigation = [
     icon: "fa-solid fa-house",
     url: "/",
   },
-
+  {
+    title: "Projects",
+    icon: "fa-solid fa-folder-open",
+    url: "/projects",
+  },
   {
     title: "Activities",
     icon: "fa-solid fa-clipboard-list",

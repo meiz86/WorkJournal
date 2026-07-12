@@ -1,51 +1,51 @@
 const Dashboard = require("../models/dashboardModel");
 
-exports.index = (req, res) => {
+exports.index = async (req, res) => {
+  try {
+    const [
+      stats,
+      activities,
+      tasks,
+      hours,
+      taskStatus,
+      streak,
+      topProject,
+      averageHours,
+      completionRate,
+    ] = await Promise.all([
+      Dashboard.getStatisticsAsync(),
+      Dashboard.getRecentActivitiesAsync(5),
+      Dashboard.getUpcomingTasksAsync(5),
+      Dashboard.getWeeklyHoursAsync(),
+      Dashboard.getTaskStatusAsync(),
+      Dashboard.getWorkStreakAsync(),
+      Dashboard.getTopProjectAsync(),
+      Dashboard.getAverageHoursAsync(),
+      Dashboard.getCompletionRateAsync(),
+    ]);
 
-    Dashboard.getStatistics((err, stats) => {
+    res.render("dashboard", {
+      title: "Dashboard",
 
-        if (err) return res.send(err.message);
+      stats,
+      activities,
+      tasks,
+      hours,
+      taskStatus,
 
-        Dashboard.getRecentActivities(5, (err, activities) => {
+      kpi: {
+        streak,
 
-            if (err) return res.send(err.message);
+        topProject,
 
-            Dashboard.getUpcomingTasks(5, (err, tasks) => {
+        averageHours,
 
-                if (err) return res.send(err.message);
-
-                Dashboard.getWeeklyHours((err, hours) => {
-
-                    if (err) return res.send(err.message);
-
-                    Dashboard.getTaskStatus((err, taskStatus) => {
-
-                        if (err) return res.send(err.message);
-
-                        res.render("dashboard", {
-
-                            title: "Dashboard",
-
-                            stats,
-
-                            activities,
-
-                            tasks,
-
-                            hours,
-
-                            taskStatus
-
-                        });
-
-                    });
-
-                });
-
-            });
-
-        });
-
+        completionRate,
+      },
     });
+  } catch (err) {
+    console.error(err);
 
+    res.status(500).send(err.message);
+  }
 };
