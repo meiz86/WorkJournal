@@ -122,3 +122,23 @@
     </table>
 
 </div>
+<script>
+
+const search = document.getElementById("projectSearch");
+
+search.addEventListener("keyup", function () {
+
+    const value = this.value.toLowerCase();
+
+    document.querySelectorAll(".dashboard-table tbody tr").forEach(row => {
+
+        row.style.display =
+            row.innerText.toLowerCase().includes(value)
+                ? ""
+                : "none";
+
+    });
+
+});
+
+</script>

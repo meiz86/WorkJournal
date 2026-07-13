@@ -23,8 +23,13 @@ const navigation = [
 
   {
     title: "Reports",
-    icon: "fa-solid fa-chart-column",
+    icon: "fa-solid fa-chart-line",
     url: "/reports",
+  },
+  {
+    title: "Calendar",
+    icon: "fa-solid fa-calendar",
+    url: "/calendar",
   },
 ];
 

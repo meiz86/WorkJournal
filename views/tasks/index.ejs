@@ -66,15 +66,7 @@
                     </span>
                 </td>
                 <td><%= task.due_date %></td>
-                <td>
-                    <a href="/tasks/<%= task.id %>/edit">Edit</a>
-             <form action="/tasks/<%= task.id %>/complete" method="POST" style="display:inline;">
-                <button type="submit">Complete</button>
-            </form>
-            <form action="/tasks/<%= task.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Delete this task?');">
-                <button type="submit">Delete</button>
-            </form>
-               </td>
+                
                <td class="actions">
 
     <a

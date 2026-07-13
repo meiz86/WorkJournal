@@ -1,0 +1,109 @@
+<div class="page-header">
+
+
+</div>
+
+<div class="stats-grid">
+    <form method="GET" action="/reports/weekly" class="filter-bar">
+
+    <input
+        type="week"
+        name="week"
+        value="<%= week %>">
+
+    <button class="btn btn-primary">
+
+        Generate
+
+    </button>
+
+</form>
+
+    <div class="card">
+
+        <h3>Total Days</h3>
+
+        <h1><%= report.length %></h1>
+
+    </div>
+
+    <div class="card">
+
+        <h3>Total Hours</h3>
+
+        <h1>
+
+        <%= (
+            report.reduce((t,r)=>t+r.minutes,0)/60
+        ).toFixed(1) %>
+
+        </h1>
+
+    </div>
+
+</div>
+
+<div class="card chart-card">
+
+    <h3>Hours Worked This Week</h3>
+
+    <canvas id="weeklyChart"></canvas>
+
+</div>
+
+<div class="panel">
+
+<table class="dashboard-table">
+
+<thead>
+
+<tr>
+
+<th>Date</th>
+
+<th>Activities</th>
+
+<th>Hours</th>
+
+<th>Completed</th>
+
+<th>Pending</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<% report.forEach(day=>{ %>
+
+<tr>
+
+<td><%= day.date %></td>
+
+<td><%= day.activities %></td>
+
+<td><%= (day.minutes/60).toFixed(1) %></td>
+
+<td><%= day.completed %></td>
+
+<td><%= day.pending %></td>
+
+</tr>
+
+<% }) %>
+
+</tbody>
+
+</table>
+
+</div>
+<script>
+
+window.weeklyData=<%-JSON.stringify(report)%>;
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="/js/weeklyReport.js"></script>

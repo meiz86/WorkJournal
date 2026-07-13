@@ -1,0 +1,71 @@
+<h1>Calendar</h1>
+
+<div class="calendar-nav">
+
+    <a href="/calendar?month=<%= previousMonth %>" class="btn btn-secondary">
+        ← Previous
+    </a>
+
+    <h2><%= monthName %></h2>
+
+    <a href="/calendar?month=<%= nextMonth %>" class="btn btn-secondary">
+        Next →
+    </a>
+
+</div>
+
+<div class="calendar">
+
+    <!-- Week Headers -->
+    <div class="header">Sun</div>
+    <div class="header">Mon</div>
+    <div class="header">Tue</div>
+    <div class="header">Wed</div>
+    <div class="header">Thu</div>
+    <div class="header">Fri</div>
+    <div class="header">Sat</div>
+
+    <!-- Empty cells before the first day -->
+    <% for (let i = 0; i < startDay; i++) { %>
+        <div class="empty"></div>
+    <% } %>
+
+    <!-- Calendar Days -->
+    <% for (let day = 1; day <= daysInMonth; day++) { %>
+
+        <%
+            const fullDate = `${month}-${String(day).padStart(2, "0")}`;
+            const info = data.find(d => d.date === fullDate);
+        %>
+
+        <a href="/calendar/day/<%= fullDate %>" class="day-link">
+
+            <div class="day <%= fullDate === today ? 'today' : '' %>">
+
+                <div class="number">
+                    <%= day %>
+                </div>
+
+                <% if (info) { %>
+
+                    <% if (info.activities > 0) { %>
+                        <div class="activity-badge">
+                            🔵 <%= info.activities %> Activity<%= info.activities > 1 ? "ies" : "" %>
+                        </div>
+                    <% } %>
+
+                    <% if (info.tasks > 0) { %>
+                        <div class="task-badge">
+                            ✅ <%= info.tasks %> Task<%= info.tasks > 1 ? "s" : "" %>
+                        </div>
+                    <% } %>
+
+                <% } %>
+
+            </div>
+
+        </a>
+
+    <% } %>
+
+</div>

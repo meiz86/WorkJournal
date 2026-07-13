@@ -1,0 +1,152 @@
+<div class="page-header">
+</div>
+
+<form method="GET" action="/reports/daily" class="filter-bar">
+
+    <input
+        type="date"
+        name="date"
+        value="<%= filters.date %>">
+
+    <select name="project_id">
+        <option value="">All Projects</option>
+
+        <% projects.forEach(project => { %>
+
+            <option
+                value="<%= project.id %>"
+                <%= filters.project_id == project.id ? "selected" : "" %>>
+
+                <%= project.name %>
+
+            </option>
+
+        <% }) %>
+
+    </select>
+
+    <select name="department">
+
+        <option value="">All Departments</option>
+
+        <% departments.forEach(dep => { %>
+
+            <option
+                value="<%= dep.department %>"
+                <%= filters.department === dep.department ? "selected" : "" %>>
+                <%= dep.department %>
+            </option>
+
+        <% }) %>
+
+    </select>
+
+    <select name="status">
+
+        <option value="">All Status</option>
+
+        <option value="Pending"
+            <%= filters.status==="Pending" ? "selected" : "" %>>
+            Pending
+        </option>
+
+        <option value="In Progress"
+            <%= filters.status==="In Progress" ? "selected" : "" %>>
+            In Progress
+        </option>
+
+        <option value="Completed"
+            <%= filters.status==="Completed" ? "selected" : "" %>>
+            Completed
+        </option>
+
+    </select>
+
+    <input
+        type="text"
+        name="search"
+        placeholder="Search activity..."
+        value="<%= filters.search %>">
+
+    <button class="btn btn-primary">
+        Generate
+    </button>
+<a href="/reports/daily/pdf" class="btn btn-danger">
+    PDF
+</a>
+
+<a href="/reports/daily/excel" class="btn btn-success">
+    Excel
+</a>
+</form>
+
+<!-- Activities -->
+
+<div class="panel">
+
+    <div class="panel-header">
+
+        <h2>Activities</h2>
+
+    </div>
+
+    <table class="dashboard-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Date</th>
+                <th>Project</th>
+                <th>Department</th>
+                <th>Activity</th>
+                <th>Duration</th>
+                <th>Status</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        <% if (activities.length === 0) { %>
+
+            <tr>
+
+                <td colspan="6">
+
+                    No activities found.
+
+                </td>
+
+            </tr>
+
+        <% } else { %>
+
+            <% activities.forEach(activity => { %>
+             
+                <tr>
+
+                    <td><%= activity.date %></td>
+
+                    <td><%= activity.project || "-" %></td>
+
+                    <td><%= activity.department || "-" %></td>
+
+                    <td><%= activity.activity %></td>
+
+                    <td><%= activity.duration %> min</td>
+
+                    <td><%= activity.status %></td>
+
+                </tr>
+
+            <% }) %>
+
+        <% } %>
+
+        </tbody>
+
+    </table>
+
+</div>

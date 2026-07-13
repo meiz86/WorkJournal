@@ -1,0 +1,25 @@
+<h1><%= date %></h1>
+
+<h2>Activities</h2>
+
+<ul>
+<% activities.forEach(activity => { %>
+    <li>
+        <%= activity.activity %>
+    </li>
+<% }) %>
+</ul>
+
+<h2>Tasks</h2>
+
+<ul>
+<% tasks.forEach(task => { %>
+    <li>
+        <%= task.title %>
+    </li>
+<% }) %>
+</ul>
+
+<a href="/calendar">
+    ← Back to Calendar
+</a>

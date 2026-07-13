@@ -512,3 +512,132 @@ canvas {
 
   border-radius: 20px;
 }
+.filter-bar {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 15px;
+
+  margin-bottom: 25px;
+
+  align-items: center;
+}
+
+.filter-bar input,
+.filter-bar select {
+  padding: 10px 14px;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 8px;
+
+  min-width: 180px;
+}
+.activity-badge {
+  background: #2563eb;
+
+  color: white;
+
+  padding: 3px 6px;
+
+  border-radius: 6px;
+
+  font-size: 12px;
+
+  margin-top: 4px;
+}
+
+.task-badge {
+  background: #16a34a;
+
+  color: white;
+
+  padding: 3px 6px;
+
+  border-radius: 6px;
+
+  font-size: 12px;
+
+  margin-top: 4px;
+}
+.calendar {
+  display: grid;
+
+  grid-template-columns: repeat(7, 1fr);
+
+  gap: 10px;
+}
+
+.header {
+  font-weight: bold;
+
+  text-align: center;
+
+  padding: 10px;
+
+  background: #2563eb;
+
+  color: white;
+}
+
+.day {
+  min-height: 120px;
+
+  border: 1px solid #ddd;
+
+  border-radius: 8px;
+
+  padding: 10px;
+
+  background: white;
+}
+
+.number {
+  font-weight: bold;
+
+  font-size: 18px;
+}
+
+.empty {
+  min-height: 120px;
+}
+.today {
+  border: 2px solid #2563eb;
+  background: #eff6ff;
+}
+.calendar-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.day-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.day {
+  min-height: 120px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  background: #fff;
+  transition: 0.2s;
+}
+
+.day:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+}
+
+.today {
+  border: 2px solid #2563eb;
+  background: #eff6ff;
+}
+@media (max-width: 768px) {
+  .calendar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

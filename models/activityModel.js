@@ -12,10 +12,9 @@ function createActivity(activity, callback) {
             activity,
             description,
             duration,
-            status,
-            description
+            status
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?,  ?, ?, ?)
     `;
 
   db.run(
@@ -30,7 +29,6 @@ function createActivity(activity, callback) {
       activity.description,
       activity.duration,
       activity.status,
-      activity.description,
     ],
     function (err) {
       callback(err, this.lastID);

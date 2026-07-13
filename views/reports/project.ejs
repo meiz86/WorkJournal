@@ -1,0 +1,116 @@
+<div class="page-header">
+    <h1>Project Report</h1>
+</div>
+
+<form method="GET" action="/reports/project" class="filter-bar">
+
+    <select name="project_id">
+
+        <option value="">All Projects</option>
+
+        <% projects.forEach(project => { %>
+
+            <option
+                value="<%= project.id %>"
+                <%= projectId == project.id ? "selected" : "" %>>
+
+                <%= project.name %>
+
+            </option>
+
+        <% }) %>
+
+    </select>
+
+    <button class="btn btn-primary">
+        Generate
+    </button>
+
+</form>
+
+<div class="stats-grid">
+
+    <div class="card">
+
+        <h3>Projects</h3>
+
+        <h1><%= report.length %></h1>
+
+    </div>
+
+    <div class="card">
+
+        <h3>Total Hours</h3>
+
+        <h1>
+
+        <%= (
+            report.reduce((t,r)=>t+(r.minutes||0),0)/60
+        ).toFixed(1) %>
+
+        </h1>
+
+    </div>
+
+</div>
+
+<div class="card chart-card">
+
+    <h3>Hours by Project</h3>
+
+    <canvas id="projectChart"></canvas>
+
+</div>
+
+<div class="panel">
+
+<table class="dashboard-table">
+
+<thead>
+
+<tr>
+
+<th>Project</th>
+<th>Activities</th>
+<th>Hours</th>
+<th>Completed</th>
+<th>Pending</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<% report.forEach(project => { %>
+
+<tr>
+
+<td><%= project.project %></td>
+
+<td><%= project.activities %></td>
+
+<td><%= ((project.minutes||0)/60).toFixed(1) %></td>
+
+<td><%= project.completed %></td>
+
+<td><%= project.pending %></td>
+
+</tr>
+
+<% }) %>
+
+</tbody>
+
+</table>
+
+</div>
+
+<script>
+
+window.projectData = <%- JSON.stringify(report) %>;
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/projectReport.js"></script>

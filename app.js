@@ -8,6 +8,10 @@ const navigation = require("./config/navigation");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const projectRoutes = require("./routes/projects");
+const reportRoutes = require("./routes/reports");
+const exportRoutes = require("./routes/export");
+const calendarRoutes = require("./routes/calendar");
+
 const PORT = 3000;
 
 // View Engine
@@ -22,7 +26,7 @@ app.use((req, res, next) => {
 
   next();
 });
-
+app.use("/export", exportRoutes);
 app.use(expressLayouts);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -30,6 +34,8 @@ app.use("/activities", activityRoutes);
 app.use("/", dashboardRoutes);
 app.use("/tasks", taskRoutes);
 app.use("/projects", projectRoutes);
+app.use("/reports", reportRoutes);
+app.use("/calendar", calendarRoutes);
 
 // Static Files
 app.use(express.static(path.join(__dirname, "public")));
