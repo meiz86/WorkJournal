@@ -1,71 +1,73 @@
-<h1>Add Activity</h1>
+<div class="form-card">
 
-<form action="/activities/new" method="POST">
+    <h2>Add Activity</h2>
 
-    <p>
-        Date
-        <br>
-        <input type="date" name="date" required>
-    </p>
+    <form action="/activities/new" method="POST">
 
-    <p>
-        Project
-        <br>
-        <input type="text" name="project">
-    </p>
+        <div class="form-group">
+            <label>Date</label>
+            <input type="date" name="date" required>
+        </div>
 
-    <p>
-        Department
-        <br>
-        <input type="text" name="department">
-    </p>
+        <div class="form-group">
+            <label>Project</label>
+            <input type="text" name="project">
+        </div>
 
-    <p>
-        Activity
-        <br>
-        <input type="text" name="activity" required>
-    </p>
+        <div class="form-group">
+            <label>Department</label>
+            <input type="text" name="department">
+        </div>
 
-    <p>
-        Description
-        <br>
-        <textarea name="description" rows="5"></textarea>
-    </p>
+        <div class="form-group">
+            <label>Activity</label>
+            <input type="text" name="activity" required>
+        </div>
 
-    <p>
-        Duration (minutes)
-        <br>
-        <input type="number" name="duration">
-    </p>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea name="description" rows="5"></textarea>
+        </div>
 
-    <p>
-        Status
-        <br>
+        <div class="form-group">
+            <label>Duration (minutes)</label>
+            <input type="number" name="duration">
+        </div>
 
-        <select name="status">
+        <div class="form-group">
+            <label>Status</label>
 
-            <% statuses.forEach(status=> { %>
+            <select name="status">
 
-                <option value="<%= status %>" <%=status==="Completed" ? "selected" : "" %>>
+                <% statuses.forEach(status => { %>
 
-                    <%= status %>
-
-                </option>
+                    <option value="<%= status %>" <%= status === "Completed" ? "selected" : "" %>>
+                        <%= status %>
+                    </option>
 
                 <% }) %>
 
-        </select>
+            </select>
 
-    </p>
+        </div>
 
-    <p>
-        Remarks
-        <br>
-        <textarea name="remarks"></textarea>
-    </p>
+        <div class="form-group">
+            <label>Remarks</label>
+            <textarea name="remarks" rows="3"></textarea>
+        </div>
 
-    <button type="submit">
-        Save Activity
-    </button>
+        <div style="display:flex; gap:10px; margin-top:20px;">
 
-</form>
+            <button type="submit" class="btn btn-primary">
+                Save Activity
+            </button>
+
+            <a href="/activities" class="btn btn-secondary">
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>

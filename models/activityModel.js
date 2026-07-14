@@ -1,31 +1,35 @@
 const db = require("../database/db");
 
+// ============================
+// Create Activity
+// ============================
+
 function createActivity(activity, callback) {
   const sql = `
-          INSERT INTO activities
-          (
-              user_id,
-              date,
-              start_time,
-              end_time,
-              project,
-              department,
-              activity,
-              description,
-              duration,
-              status
-          )
-          VALUES (?, ?, ?, ?, ?,?, ?,  ?, ?, ?)
-      `;
+    INSERT INTO activities
+    (
+      user_id,
+      project_id,
+      date,
+      start_time,
+      end_time,
+      department,
+      activity,
+      description,
+      duration,
+      status
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
 
   db.run(
     sql,
     [
       activity.user_id,
+      activity.project_id,
       activity.date,
       activity.start_time,
       activity.end_time,
-      activity.project,
       activity.department,
       activity.activity,
       activity.description,
@@ -34,15 +38,23 @@ function createActivity(activity, callback) {
     ],
     function (err) {
       callback(err, this.lastID);
-    },
+    }
   );
 }
 
+// ============================
+// Get Activities
+// ============================
+
 function getActivities(filters, userId, callback) {
   let sql = `
-    SELECT *
-    FROM activities
-    WHERE user_id = ?
+    SELECT
+      a.*,
+      p.name AS project
+    FROM activities a
+    LEFT JOIN projects p
+      ON a.project_id = p.id
+    WHERE a.user_id = ?
   `;
 
   const params = [userId];
@@ -50,29 +62,29 @@ function getActivities(filters, userId, callback) {
   if (filters.search) {
     sql += `
       AND (
-        project LIKE ?
-        OR department LIKE ?
-        OR activity LIKE ?
-        OR description LIKE ?
+        p.name LIKE ?
+        OR a.department LIKE ?
+        OR a.activity LIKE ?
+        OR a.description LIKE ?
       )
     `;
 
     const keyword = `%${filters.search}%`;
-
     params.push(keyword, keyword, keyword, keyword);
   }
 
   if (filters.status && filters.status !== "All") {
-    sql += " AND status = ?";
+    sql += " AND a.status = ?";
     params.push(filters.status);
   }
 
   sql += `
-    ORDER BY date DESC, start_time DESC
+    ORDER BY a.date DESC, a.start_time DESC
   `;
 
   db.all(sql, params, callback);
 }
+
 module.exports = {
   createActivity,
   getActivities,
