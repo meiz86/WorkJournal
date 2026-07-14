@@ -1,22 +1,22 @@
 const db = require("../database/db");
 
-function getDailyReport(filters, callback) {
+function getDailyReport(userId, filters, callback) {
   let sql = `
         SELECT
             a.date,
             p.name AS project,
             a.department,
             a.activity,
-            a.description,       
+            a.description,
             a.duration,
             a.status
         FROM activities a
         LEFT JOIN projects p
             ON a.project_id = p.id
-        WHERE 1=1
+        WHERE a.user_id = ?
     `;
 
-  const params = [];
+  const params = [userId];
 
   if (filters.date) {
     sql += " AND a.date = ?";
@@ -51,6 +51,7 @@ function getDailyReport(filters, callback) {
     callback(null, activities);
   });
 }
+
 function getProjects(callback) {
   const sql = `
         SELECT
@@ -76,7 +77,8 @@ function getDepartments(callback) {
 
   db.all(sql, [], callback);
 }
-function getWeeklyReport(week, callback) {
+
+function getWeeklyReport(userId, week, callback) {
   const sql = `
         SELECT
             date,
@@ -85,18 +87,20 @@ function getWeeklyReport(week, callback) {
             SUM(CASE WHEN status='Completed' THEN 1 ELSE 0 END) AS completed,
             SUM(CASE WHEN status!='Completed' THEN 1 ELSE 0 END) AS pending
         FROM activities
-        WHERE strftime('%Y-%W', date) = strftime('%Y-%W','now')
+        WHERE user_id = ?
+          AND strftime('%Y-%W', date) = strftime('%Y-%W','now')
         GROUP BY date
         ORDER BY date
     `;
 
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [userId], (err, rows) => {
     if (err) return callback(err);
 
     callback(null, rows);
   });
 }
-function getMonthlyReport(month, callback) {
+
+function getMonthlyReport(userId, month, callback) {
   let sql = `
         SELECT
             date,
@@ -105,16 +109,16 @@ function getMonthlyReport(month, callback) {
             SUM(CASE WHEN status='Completed' THEN 1 ELSE 0 END) AS completed,
             SUM(CASE WHEN status!='Completed' THEN 1 ELSE 0 END) AS pending
         FROM activities
+        WHERE user_id = ?
     `;
 
-  const params = [];
+  const params = [userId];
 
   if (month) {
-    sql += ` WHERE strftime('%Y-%m', date) = ?`;
-
+    sql += ` AND strftime('%Y-%m', date) = ?`;
     params.push(month);
   } else {
-    sql += ` WHERE strftime('%Y-%m', date) = strftime('%Y-%m','now')`;
+    sql += ` AND strftime('%Y-%m', date) = strftime('%Y-%m','now')`;
   }
 
   sql += `
@@ -128,7 +132,8 @@ function getMonthlyReport(month, callback) {
     callback(null, rows);
   });
 }
-function getProjectReport(projectId, callback) {
+
+function getProjectReport(userId, projectId, callback) {
   let sql = `
         SELECT
             p.name AS project,
@@ -139,13 +144,13 @@ function getProjectReport(projectId, callback) {
         FROM projects p
         LEFT JOIN activities a
             ON p.id = a.project_id
+           AND a.user_id = ?
     `;
 
-  const params = [];
+  const params = [userId];
 
   if (projectId) {
     sql += ` WHERE p.id = ?`;
-
     params.push(projectId);
   }
 
@@ -156,6 +161,7 @@ function getProjectReport(projectId, callback) {
 
   db.all(sql, params, callback);
 }
+
 module.exports = {
   getDailyReport,
   getProjects,

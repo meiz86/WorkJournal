@@ -2,6 +2,8 @@ const Dashboard = require("../models/dashboardModel");
 
 exports.index = async (req, res) => {
   try {
+    const userId = req.session.user.id;
+
     const [
       stats,
       activities,
@@ -13,33 +15,28 @@ exports.index = async (req, res) => {
       averageHours,
       completionRate,
     ] = await Promise.all([
-      Dashboard.getStatisticsAsync(),
-      Dashboard.getRecentActivitiesAsync(5),
-      Dashboard.getUpcomingTasksAsync(5),
-      Dashboard.getWeeklyHoursAsync(),
-      Dashboard.getTaskStatusAsync(),
-      Dashboard.getWorkStreakAsync(),
-      Dashboard.getTopProjectAsync(),
-      Dashboard.getAverageHoursAsync(),
-      Dashboard.getCompletionRateAsync(),
+      Dashboard.getStatisticsAsync(userId),
+      Dashboard.getRecentActivitiesAsync(userId, 5),
+      Dashboard.getUpcomingTasksAsync(userId, 5),
+      Dashboard.getWeeklyHoursAsync(userId),
+      Dashboard.getTaskStatusAsync(userId),
+      Dashboard.getWorkStreakAsync(userId),
+      Dashboard.getTopProjectAsync(userId),
+      Dashboard.getAverageHoursAsync(userId),
+      Dashboard.getCompletionRateAsync(userId),
     ]);
 
     res.render("dashboard", {
       title: "Dashboard",
-
       stats,
       activities,
       tasks,
       hours,
       taskStatus,
-
       kpi: {
         streak,
-
         topProject,
-
         averageHours,
-
         completionRate,
       },
     });

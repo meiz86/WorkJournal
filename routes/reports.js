@@ -3,6 +3,7 @@ const router = express.Router();
 
 const controller = require("../controllers/reportController");
 
+
 router.get("/", controller.index);
 router.get("/daily", controller.daily);
 router.get("/weekly", controller.weekly);

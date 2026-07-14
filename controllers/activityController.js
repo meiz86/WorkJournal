@@ -9,24 +9,18 @@ exports.showForm = (req, res) => {
 };
 
 exports.create = (req, res) => {
+  req.body.user_id = req.session.user.id;
+
   Activity.createActivity(req.body, (err, id) => {
     if (err) {
       return res.send(err.message);
     }
+
     res.redirect("/activities");
   });
 };
-// exports.create = (req, res) => {
-//   console.log(req.body);
-
-//   Activity.createActivity(req.body, (err, id) => {
-//     if (err) return res.send(err.message);
-
-//     res.redirect("/activities");
-//   });
-// };
 exports.index = (req, res) => {
-  Activity.getActivities(req.query, (err, activities) => {
+  Activity.getActivities(req.query, req.session.user.id, (err, activities) => {
     if (err) return res.send(err.message);
 
     res.render("activities/index", {

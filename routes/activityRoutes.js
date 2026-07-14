@@ -1,12 +1,14 @@
 const express = require("express");
-
 const router = express.Router();
 
-const activityController = require("../controllers/activityController");
+const controller = require("../controllers/activityController");
 
-router.get("/new", activityController.showForm);
-router.get("/", activityController.index);
+// Protect all activity routes
 
-router.post("/new", activityController.create);
+router.get("/", controller.index);
+
+router.get("/new", controller.showForm);
+
+router.post("/new", controller.create);
 
 module.exports = router;

@@ -1,14 +1,63 @@
 const db = require("./db");
 
 db.serialize(() => {
-  // Activities table
+  // ===========================
+  // Users
+  // ===========================
   db.run(`
-       CREATE TABLE IF NOT EXISTS activities (
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL UNIQUE,
+      password TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'Employee',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  // ===========================
+  // Departments
+  // ===========================
+  db.run(`
+    CREATE TABLE IF NOT EXISTS departments (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL UNIQUE,
+      manager TEXT,
+      is_active INTEGER DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  // ===========================
+  // Projects
+  // ===========================
+  db.run(`
+CREATE TABLE IF NOT EXISTS projects (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    client TEXT,
+    description TEXT,
+    color TEXT DEFAULT '#2563eb',
+    start_date TEXT,
+    end_date TEXT,
+    status TEXT DEFAULT 'Active',
+    is_active INTEGER DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+  `);
+
+  // ===========================
+  // Activities
+  // ===========================
+  db.run(`
+   CREATE TABLE IF NOT EXISTS activities (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    project_id INTEGER NOT NULL,
     date TEXT NOT NULL,
     start_time TEXT,
     end_time TEXT,
-    project TEXT,
     department TEXT,
     category TEXT DEFAULT 'General',
     activity TEXT NOT NULL,
@@ -18,53 +67,23 @@ db.serialize(() => {
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME
 );
-    `);
+  `);
 
-  // Tasks table
+  // ===========================
+  // Tasks
+  // ===========================
   db.run(`
 CREATE TABLE IF NOT EXISTS tasks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    project_id INTEGER NOT NULL,
     title TEXT NOT NULL,
     description TEXT,
-    project TEXT,
     department TEXT,
     priority TEXT DEFAULT 'Medium',
     status TEXT DEFAULT 'Pending',
     due_date DATE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-)
-`);
-  db.run(`
-CREATE TABLE IF NOT EXISTS projects (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL UNIQUE,
-    code TEXT UNIQUE,
-    description TEXT,
-    is_active INTEGER DEFAULT 1,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
-`);
-  db.run(`
-    CREATE TABLE IF NOT EXISTS departments (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL UNIQUE,
-    manager TEXT,
-    is_active INTEGER DEFAULT 1,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-    `);
-
-  db.run(`
-      CREATE TABLE IF NOT EXISTS projects (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL UNIQUE,
-    client TEXT,
-    description TEXT,
-    color TEXT DEFAULT '#2563eb',
-    start_date TEXT,
-    end_date TEXT,
-    status TEXT DEFAULT 'Active',
-    created_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
-`);
+  `);
 });

@@ -1,12 +1,29 @@
 <header class="navbar">
 
-    <h2>
-        <%= title %>
-    </h2>
+    <div class="navbar-left">
+        <h2><%= title %></h2>
+    </div>
 
     <div class="navbar-right">
 
         <span id="currentDate"></span>
+
+        <% if (user) { %>
+
+            <div class="user-info">
+
+                <strong><%= user.name %></strong>
+
+                <span><%= user.role %></span>
+
+            </div>
+
+            <a href="/logout" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+
+        <% } %>
 
     </div>
 

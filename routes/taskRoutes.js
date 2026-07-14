@@ -1,20 +1,13 @@
 const express = require("express");
-
 const router = express.Router();
 
-const taskController = require("../controllers/taskController");
+const controller = require("../controllers/taskController");
 
-router.get("/", taskController.index);
 
-router.get("/new", taskController.showForm);
+router.get("/", controller.index);
 
-router.post("/new", taskController.create);
-router.get("/:id/edit", taskController.editForm);
+router.get("/new", controller.showForm);
 
-router.post("/:id/edit", taskController.update);
-
-router.post("/:id/complete", taskController.complete);
-
-router.post("/:id/delete", taskController.delete);
+router.post("/new", controller.create);
 
 module.exports = router;

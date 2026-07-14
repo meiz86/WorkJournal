@@ -1,12 +1,11 @@
 const Project = require("../models/projectModel");
 
 exports.index = (req, res) => {
-  Project.getAll((err, projects) => {
+  Project.getAll(req.session.user.id, (err, projects) => {
     if (err) return res.send(err.message);
 
     res.render("projects/index", {
       title: "Projects",
-
       projects,
     });
   });

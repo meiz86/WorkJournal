@@ -1,26 +1,43 @@
 <aside class="sidebar">
 
     <div class="logo">
-        <h2>Work Journal</h2>
+        <h2>📒 WorkJournal</h2>
     </div>
 
-    <ul>
+    <ul class="menu">
 
-        <% navigation.forEach(item=> { %>
+        <% navigation.forEach(item => { %>
 
-            <li>
+            <li class="<%= currentPath === item.url ? 'active' : '' %>">
 
                 <a href="<%= item.url %>">
 
                     <i class="<%= item.icon %>"></i>
 
-                    <%= item.title %>
+                    <span><%= item.title %></span>
 
                 </a>
 
-            </li>            
+            </li>
 
-            <% }) %>          
+        <% }) %>
+
+        <% if (user && user.role === "Admin") { %>
+
+            <li class="<%= currentPath.startsWith('/admin') ? 'active' : '' %>">
+
+                <a href="/admin">
+
+                    <i class="fas fa-users-cog"></i>
+
+                    <span>Administration</span>
+
+                </a>
+
+            </li>
+
+        <% } %>
+
     </ul>
 
 </aside>

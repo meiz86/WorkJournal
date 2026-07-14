@@ -1,74 +1,93 @@
 const Task = require("../models/taskModel");
 
 exports.index = (req, res) => {
-  Task.getAllTasks((err, tasks) => {
-    if (err) return res.send(err.message);
 
-    res.render("tasks/index", {
-      title: "Tasks",
+    Task.getAllTasks(req.session.user.id, (err, tasks) => {
 
-      tasks,
+        if (err) return res.send(err.message);
+
+        res.render("tasks/index", {
+            title: "Tasks",
+            tasks,
+        });
+
     });
-  });
+
 };
 
 exports.showForm = (req, res) => {
-  res.render("tasks/new", {
-    title: "New Task",
-  });
+
+    res.render("tasks/new", {
+        title: "New Task",
+    });
+
 };
 
 exports.create = (req, res) => {
-  Task.createTask(req.body, (err) => {
-    if (err) return res.send(err.message);
 
-    res.redirect("/tasks");
-  });
+    req.body.user_id = req.session.user.id;
+
+    Task.createTask(req.body, (err) => {
+
+        if (err) return res.send(err.message);
+
+        res.redirect("/tasks");
+
+    });
+
 };
 
 exports.editForm = (req, res) => {
-  Task.getTaskById(req.params.id, (err, task) => {
-    if (err) return res.send(err.message);
 
-    res.render("tasks/edit", {
-      title: "Edit Task",
+    Task.getTaskById(req.params.id, (err, task) => {
 
-      task,
+        if (err) return res.send(err.message);
+
+        res.render("tasks/edit", {
+            title: "Edit Task",
+            task,
+        });
+
     });
-  });
+
 };
+
 exports.update = (req, res) => {
-  Task.updateTask(
-    req.params.id,
 
-    req.body,
+    Task.updateTask(
+        req.params.id,
+        req.body,
+        (err) => {
 
-    (err) => {
-      if (err) return res.send(err.message);
+            if (err) return res.send(err.message);
 
-      res.redirect("/tasks");
-    },
-  );
+            res.redirect("/tasks");
+
+        }
+    );
+
 };
+
 exports.complete = (req, res) => {
-  Task.completeTask(
-    req.params.id,
 
-    (err) => {
-      if (err) return res.send(err.message);
+    Task.completeTask(req.params.id, (err) => {
 
-      res.redirect("/tasks");
-    },
-  );
+        if (err) return res.send(err.message);
+
+        res.redirect("/tasks");
+
+    });
+
 };
+
 exports.delete = (req, res) => {
-  Task.deleteTask(
-    req.params.id,
 
-    (err) => {
-      if (err) return res.send(err.message);
+    Task.deleteTask(req.params.id, (err) => {
 
-      res.redirect("/tasks");
-    },
-  );
+        if (err) return res.send(err.message);
+
+        res.redirect("/tasks");
+
+    });
+
 };

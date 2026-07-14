@@ -1,130 +1,126 @@
 const db = require("../database/db");
 
-function getStatistics(callback) {
+function getStatistics(userId, callback) {
   const sql = `
-
         SELECT
-
             COUNT(*) AS totalActivities,
 
             SUM(
                 CASE
                     WHEN date = DATE('now')
-                    THEN 1
-                    ELSE 0
+                    THEN 1 ELSE 0
                 END
             ) AS todayActivities,
 
             SUM(
                 CASE
-                    WHEN strftime('%Y-%W', date)
-                    =
-                    strftime('%Y-%W','now')
-                    THEN 1
-                    ELSE 0
+                    WHEN strftime('%Y-%W', date)=strftime('%Y-%W','now')
+                    THEN 1 ELSE 0
                 END
             ) AS weekActivities,
 
             SUM(
                 CASE
-                    WHEN strftime('%Y-%m', date)
-                    =
-                    strftime('%Y-%m','now')
-                    THEN 1
-                    ELSE 0
+                    WHEN strftime('%Y-%m', date)=strftime('%Y-%m','now')
+                    THEN 1 ELSE 0
                 END
             ) AS monthActivities,
 
             SUM(duration) AS totalMinutes
 
         FROM activities
-
+        WHERE user_id = ?
     `;
 
-  db.get(sql, [], (err, row) => {
-    callback(err, row);
-  });
+  db.get(sql, [userId], callback);
 }
-function getRecentActivities(limit, callback) {
+
+function getRecentActivities(userId, limit, callback) {
   const sql = `
-        SELECT
-            id,
-            date,
-            project,
-            activity,
-            duration,
-            status
-        FROM activities
-        ORDER BY date DESC, id DESC
-        LIMIT ?
-    `;
+    SELECT
+        a.id,
+        a.date,
+        p.name AS project,
+        a.activity,
+        a.duration,
+        a.status
+    FROM activities a
+    LEFT JOIN projects p
+        ON a.project_id = p.id
+    WHERE a.user_id = ?
+    ORDER BY a.date DESC, a.id DESC
+    LIMIT ?
+  `;
 
-  db.all(sql, [limit], (err, rows) => {
-    callback(err, rows);
-  });
+  db.all(sql, [userId, limit], callback);
 }
-function getUpcomingTasks(limit, callback) {
+function getUpcomingTasks(userId, limit, callback) {
   const sql = `
-        SELECT
-            title,
-            project,
-            due_date,
-            priority,
-            status
-        FROM tasks
-        WHERE status != 'Completed'
-        ORDER BY due_date ASC
-        LIMIT ?
-    `;
+    SELECT
+        t.title,
+        p.name AS project,
+        t.due_date,
+        t.priority,
+        t.status
+    FROM tasks t
+    LEFT JOIN projects p
+        ON t.project_id = p.id
+    WHERE t.user_id = ?
+      AND t.status != 'Completed'
+    ORDER BY t.due_date ASC
+    LIMIT ?
+  `;
 
-  db.all(sql, [limit], (err, rows) => {
-    callback(err, rows);
-  });
+  db.all(sql, [userId, limit], callback);
 }
-function getWeeklyHours(callback) {
+
+function getWeeklyHours(userId, callback) {
   const sql = `
         SELECT
             date,
             SUM(duration) AS total_minutes
         FROM activities
-        WHERE date >= date('now','-6 days')
+        WHERE user_id = ?
+          AND date >= date('now','-6 days')
         GROUP BY date
         ORDER BY date
     `;
 
-  db.all(sql, [], callback);
+  db.all(sql, [userId], callback);
 }
 
-function getTaskStatus(callback) {
+function getTaskStatus(userId, callback) {
   const sql = `
-       SELECT
-           status,
-               COUNT(*) AS total
-               FROM tasks
-               GROUP BY status
-               ORDER BY
-               CASE status
-                   WHEN 'Pending' THEN 1
-                       WHEN 'In Progress' THEN 2
-                           WHEN 'Completed' THEN 3
-                               ELSE 4
-                               END;
+        SELECT
+            status,
+            COUNT(*) AS total
+        FROM tasks
+        WHERE user_id = ?
+        GROUP BY status
+        ORDER BY
+        CASE status
+            WHEN 'Pending' THEN 1
+            WHEN 'In Progress' THEN 2
+            WHEN 'Completed' THEN 3
+            ELSE 4
+        END
     `;
 
-  db.all(sql, [], callback);
+  db.all(sql, [userId], callback);
 }
-function getWorkStreak(callback) {
+
+function getWorkStreak(userId, callback) {
   const sql = `
         SELECT DISTINCT date
         FROM activities
+        WHERE user_id = ?
         ORDER BY date DESC
     `;
 
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [userId], (err, rows) => {
     if (err) return callback(err);
 
     let streak = 0;
-
     let current = new Date();
 
     for (const row of rows) {
@@ -142,165 +138,141 @@ function getWorkStreak(callback) {
     callback(null, streak);
   });
 }
-function getTopProject(callback) {
+
+function getTopProject(userId, callback) {
   const sql = `
+    SELECT
+        p.name AS project,
+        SUM(a.duration) AS minutes
+    FROM activities a
+    LEFT JOIN projects p
+        ON a.project_id = p.id
+    WHERE a.user_id = ?
+    GROUP BY a.project_id
+    ORDER BY minutes DESC
+    LIMIT 1
+  `;
 
-        SELECT
-
-            project,
-
-            SUM(duration) AS minutes
-
-        FROM activities
-
-        GROUP BY project
-
-        ORDER BY minutes DESC
-
-        LIMIT 1
-
-    `;
-
-  db.get(sql, [], callback);
+  db.get(sql, [userId], callback);
 }
-function getAverageHours(callback) {
+
+function getAverageHours(userId, callback) {
   const sql = `
-
         SELECT
-
             ROUND(AVG(total_minutes)/60.0,2) AS avg_hours
-
         FROM(
-
             SELECT
-
                 date,
-
                 SUM(duration) AS total_minutes
-
             FROM activities
-
+            WHERE user_id = ?
             GROUP BY date
-
         )
-
     `;
 
-  db.get(sql, [], callback);
+  db.get(sql, [userId], callback);
 }
-function getCompletionRate(callback) {
+
+function getCompletionRate(userId, callback) {
   const sql = `
-
         SELECT
-
             ROUND(
-
                 SUM(
-
                     CASE
-
                         WHEN status='Completed'
-
                         THEN 1
-
                         ELSE 0
-
                     END
-
                 )*100.0/
-
                 COUNT(*)
-
-            ,1)
-
-            AS rate
-
+            ,1) AS rate
         FROM tasks
-
+        WHERE user_id = ?
     `;
 
-  db.get(sql, [], callback);
+  db.get(sql, [userId], callback);
 }
-function getStatisticsAsync() {
+function getStatisticsAsync(userId) {
   return new Promise((resolve, reject) => {
-    getStatistics((err, data) => {
+    getStatistics(userId, (err, data) => {
       if (err) reject(err);
       else resolve(data);
     });
   });
 }
 
-function getRecentActivitiesAsync(limit) {
+function getRecentActivitiesAsync(userId, limit) {
   return new Promise((resolve, reject) => {
-    getRecentActivities(limit, (err, data) => {
+    getRecentActivities(userId, limit, (err, data) => {
       if (err) reject(err);
       else resolve(data);
     });
   });
 }
 
-function getUpcomingTasksAsync(limit) {
+function getUpcomingTasksAsync(userId, limit) {
   return new Promise((resolve, reject) => {
-    getUpcomingTasks(limit, (err, data) => {
+    getUpcomingTasks(userId, limit, (err, data) => {
       if (err) reject(err);
       else resolve(data);
     });
   });
 }
 
-function getWeeklyHoursAsync() {
+function getWeeklyHoursAsync(userId) {
   return new Promise((resolve, reject) => {
-    getWeeklyHours((err, data) => {
+    getWeeklyHours(userId, (err, data) => {
       if (err) reject(err);
       else resolve(data);
     });
   });
 }
 
-function getTaskStatusAsync() {
+function getTaskStatusAsync(userId) {
   return new Promise((resolve, reject) => {
-    getTaskStatus((err, data) => {
+    getTaskStatus(userId, (err, data) => {
       if (err) reject(err);
       else resolve(data);
     });
   });
 }
 
-function getWorkStreakAsync() {
+function getWorkStreakAsync(userId) {
   return new Promise((resolve, reject) => {
-    getWorkStreak((err, data) => {
+    getWorkStreak(userId, (err, data) => {
       if (err) reject(err);
       else resolve(data);
     });
   });
 }
 
-function getTopProjectAsync() {
+function getTopProjectAsync(userId) {
   return new Promise((resolve, reject) => {
-    getTopProject((err, data) => {
+    getTopProject(userId, (err, data) => {
       if (err) reject(err);
       else resolve(data);
     });
   });
 }
 
-function getAverageHoursAsync() {
+function getAverageHoursAsync(userId) {
   return new Promise((resolve, reject) => {
-    getAverageHours((err, data) => {
+    getAverageHours(userId, (err, data) => {
       if (err) reject(err);
       else resolve(data);
     });
   });
 }
 
-function getCompletionRateAsync() {
+function getCompletionRateAsync(userId) {
   return new Promise((resolve, reject) => {
-    getCompletionRate((err, data) => {
+    getCompletionRate(userId, (err, data) => {
       if (err) reject(err);
       else resolve(data);
     });
   });
 }
+
 module.exports = {
   getStatistics,
   getRecentActivities,
@@ -311,6 +283,7 @@ module.exports = {
   getTopProject,
   getAverageHours,
   getCompletionRate,
+
   getStatisticsAsync,
   getRecentActivitiesAsync,
   getUpcomingTasksAsync,
