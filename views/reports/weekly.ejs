@@ -1,29 +1,28 @@
 <div class="page-header">
 
+    <h1>Weekly Report</h1>
 
 </div>
 
 <div class="stats-grid">
+
     <form method="GET" action="/reports/weekly" class="filter-bar">
 
-    <input
-        type="week"
-        name="week"
-        value="<%= week %>">
+        <input type="week" name="week" value="<%= week %>">
 
-    <button class="btn btn-primary">
+        <button class="btn btn-primary">
+            Generate
+        </button>
 
-        Generate
-
-    </button>
-
-</form>
+    </form>
 
     <div class="card">
 
         <h3>Total Days</h3>
 
-        <h1><%= report.length %></h1>
+        <h1>
+            <%= report.length %>
+        </h1>
 
     </div>
 
@@ -33,9 +32,7 @@
 
         <h1>
 
-        <%= (
-            report.reduce((t,r)=>t+r.minutes,0)/60
-        ).toFixed(1) %>
+            <%= (report.reduce((t, r)=> t + (r.minutes || 0), 0) / 60).toFixed(1) %>
 
         </h1>
 
@@ -53,57 +50,77 @@
 
 <div class="panel">
 
-<table class="dashboard-table">
+    <table class="dashboard-table">
 
-<thead>
+        <thead>
 
-<tr>
+            <tr>
 
-<th>Date</th>
+                <th>Date</th>
+                <th>Activities</th>
+                <th>Hours</th>
+                <th>Completed</th>
+                <th>Pending</th>
 
-<th>Activities</th>
+            </tr>
 
-<th>Hours</th>
+        </thead>
 
-<th>Completed</th>
+        <tbody>
 
-<th>Pending</th>
+            <% if (report.length===0) { %>
 
-</tr>
+                <tr>
 
-</thead>
+                    <td colspan="5">
 
-<tbody>
+                        No data available for this week.
 
-<% report.forEach(day=>{ %>
+                    </td>
 
-<tr>
+                </tr>
 
-<td><%= day.date %></td>
+                <% } else { %>
 
-<td><%= day.activities %></td>
+                    <% report.forEach(day=> { %>
 
-<td><%= (day.minutes/60).toFixed(1) %></td>
+                        <tr>
 
-<td><%= day.completed %></td>
+                            <td>
+                                <%= day.date %>
+                            </td>
 
-<td><%= day.pending %></td>
+                            <td>
+                                <%= day.activities %>
+                            </td>
 
-</tr>
+                            <td>
+                                <%= ((day.minutes || 0) / 60).toFixed(1) %>
+                            </td>
 
-<% }) %>
+                            <td>
+                                <%= day.completed %>
+                            </td>
 
-</tbody>
+                            <td>
+                                <%= day.pending %>
+                            </td>
 
-</table>
+                        </tr>
+
+                        <% }) %>
+
+                            <% } %>
+
+        </tbody>
+
+    </table>
 
 </div>
+
 <script>
-
-window.weeklyData=<%-JSON.stringify(report)%>;
-
+    window.weeklyData = <% - JSON.stringify(report) %>;
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script src="/js/weeklyReport.js"></script>

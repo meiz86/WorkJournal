@@ -1,0 +1,109 @@
+<div class="page-header">
+
+    <h1>Departments</h1>
+
+    <a href="/departments/new" class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i>
+        New Department
+    </a>
+
+</div>
+
+<div class="panel">
+
+    <div class="table-toolbar">
+
+        <input type="text" id="departmentSearch" placeholder="Search departments...">
+
+    </div>
+
+    <table class="dashboard-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Name</th>
+                <th>Manager</th>
+                <th>Created</th>
+                <th>Actions</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <% if (departments.length===0) { %>
+
+                <tr>
+
+                    <td colspan="4">
+                        No departments found.
+                    </td>
+
+                </tr>
+
+                <% } %>
+
+                    <% departments.forEach(department=> { %>
+
+                        <tr>
+
+                            <td>
+                                <%= department.name %>
+                            </td>
+
+                            <td>
+                                <%= department.manager || "-" %>
+                            </td>
+
+                            <td>
+                                <%= department.created_at.substring(0,10) %>
+                            </td>
+
+                            <td>
+
+                                <a href="/departments/edit/<%= department.id %>" class="btn-edit">
+
+                                    <i class="fa-solid fa-pen"></i>
+
+                                </a>
+
+                                <a href="/departments/delete/<%= department.id %>" class="btn-delete"
+                                    onclick="return confirm('Delete this department?')">
+
+                                    <i class="fa-solid fa-trash"></i>
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        <% }) %>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<script>
+    const search = document.getElementById("departmentSearch");
+
+    search.addEventListener("keyup", function () {
+
+        const value = this.value.toLowerCase();
+
+        document.querySelectorAll(".dashboard-table tbody tr").forEach(row => {
+
+            row.style.display =
+                row.innerText.toLowerCase().includes(value)
+                    ? ""
+                    : "none";
+
+        });
+
+    });
+</script>

@@ -1,0 +1,110 @@
+<div class="page-header">
+
+    <h1>Centers</h1>
+
+    <a href="/centers/new" class="btn btn-primary">
+
+        <i class="fa-solid fa-plus"></i>
+
+        New Center
+
+    </a>
+
+</div>
+
+<div class="panel">
+
+    <table class="dashboard-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Center</th>
+
+                <th>Acronym</th>
+
+                <th>Stations</th>
+
+                <th>Hardware</th>
+
+                <th>Actions</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <% if(centers.length===0){ %>
+
+                <tr>
+
+                    <td colspan="5">
+
+                        No centers found.
+
+                    </td>
+
+                </tr>
+
+                <% } %>
+
+                    <% centers.forEach(center=>{ %>
+
+                        <tr>
+
+                            <td>
+
+                                <a href="/centers/<%= center.id %>">
+
+                                    <%= center.name %>
+
+                                </a>
+
+                            </td>
+
+                            <td>
+
+                                <%= center.acronym %>
+
+                            </td>
+
+                            <td>
+
+                                <%= center.station_count %>
+
+                            </td>
+
+                            <td>
+
+                                <%= center.hardware_count %>
+
+                            </td>
+
+                            <td>
+
+                                <a href="/centers/edit/<%= center.id %>" class="btn btn-primary btn-sm">
+
+                                    <i class="fa-solid fa-pen"></i>
+
+                                </a>
+
+                                <a href="/centers/delete/<%= center.id %>" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Delete this center?')">
+
+                                    <i class="fa-solid fa-trash"></i>
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        <% }) %>
+
+        </tbody>
+
+    </table>
+
+</div>

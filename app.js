@@ -18,8 +18,11 @@ const projectRoutes = require("./routes/projects");
 const reportRoutes = require("./routes/reports");
 const exportRoutes = require("./routes/export");
 const calendarRoutes = require("./routes/calendar");
+const departmentRoutes = require("./routes/departmentRoutes");
 
 const requireLogin = require("./middleware/auth");
+const centerRoutes = require("./routes/centerRoutes");
+const stationRoutes = require("./routes/stationRoutes");
 
 const PORT = 3000;
 
@@ -76,6 +79,9 @@ app.use("/projects", requireLogin, projectRoutes);
 app.use("/reports", requireLogin, reportRoutes);
 app.use("/calendar", requireLogin, calendarRoutes);
 app.use("/export", requireLogin, exportRoutes);
+app.use("/departments", requireLogin, departmentRoutes);
+app.use("/centers", requireLogin, centerRoutes);
+app.use("/", requireLogin, stationRoutes);
 
 // ======================================
 // Server

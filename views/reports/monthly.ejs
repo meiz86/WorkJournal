@@ -1,12 +1,12 @@
 <div class="page-header">
+
+    <h1>Monthly Report</h1>
+
 </div>
 
 <form method="GET" action="/reports/monthly" class="filter-bar">
 
-    <input
-        type="month"
-        name="month"
-        value="<%= month %>">
+    <input type="month" name="month" value="<%= month %>">
 
     <button class="btn btn-primary">
         Generate
@@ -20,7 +20,9 @@
 
         <h3>Total Days</h3>
 
-        <h1><%= report.length %></h1>
+        <h1>
+            <%= report.length %>
+        </h1>
 
     </div>
 
@@ -30,9 +32,7 @@
 
         <h1>
 
-            <%= (
-                report.reduce((t,r)=>t+r.minutes,0)/60
-            ).toFixed(1) %>
+            <%= (report.reduce((t, r)=> t + (r.minutes || 0), 0) / 60).toFixed(1) %>
 
         </h1>
 
@@ -50,51 +50,77 @@
 
 <div class="panel">
 
-<table class="dashboard-table">
+    <table class="dashboard-table">
 
-<thead>
+        <thead>
 
-<tr>
+            <tr>
 
-<th>Date</th>
-<th>Activities</th>
-<th>Hours</th>
-<th>Completed</th>
-<th>Pending</th>
+                <th>Date</th>
+                <th>Activities</th>
+                <th>Hours</th>
+                <th>Completed</th>
+                <th>Pending</th>
 
-</tr>
+            </tr>
 
-</thead>
+        </thead>
 
-<tbody>
+        <tbody>
 
-<% report.forEach(day => { %>
+            <% if (report.length===0) { %>
 
-<tr>
+                <tr>
 
-<td><%= day.date %></td>
+                    <td colspan="5">
 
-<td><%= day.activities %></td>
+                        No data available for this month.
 
-<td><%= (day.minutes/60).toFixed(1) %></td>
+                    </td>
 
-<td><%= day.completed %></td>
+                </tr>
 
-<td><%= day.pending %></td>
+                <% } else { %>
 
-</tr>
+                    <% report.forEach(day=> { %>
 
-<% }) %>
+                        <tr>
 
-</tbody>
+                            <td>
+                                <%= day.date %>
+                            </td>
 
-</table>
+                            <td>
+                                <%= day.activities %>
+                            </td>
+
+                            <td>
+                                <%= ((day.minutes || 0) / 60).toFixed(1) %>
+                            </td>
+
+                            <td>
+                                <%= day.completed %>
+                            </td>
+
+                            <td>
+                                <%= day.pending %>
+                            </td>
+
+                        </tr>
+
+                        <% }) %>
+
+                            <% } %>
+
+        </tbody>
+
+    </table>
 
 </div>
 
 <script>
 
-window.monthlyData = <%- JSON.stringify(report) %>;
+    window.monthlyData = <% - JSON.stringify(report) %>;
 
 </script>
 

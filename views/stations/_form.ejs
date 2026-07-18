@@ -1,0 +1,65 @@
+<div class="form-card">
+
+    <form action="<%= action %>" method="POST">
+
+        <div class="form-group">
+
+            <label>Station Name</label>
+
+            <input type="text" name="name" value="<%= station ? station.name : '' %>" required>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Connection Protocol</label>
+
+            <select name="protocol">
+
+                <option value="Fiber" <%=station && station.protocol==="Fiber" ? "selected" : "" %>>
+                    Fiber
+                </option>
+
+                <option value="Microwave" <%=station && station.protocol==="Microwave" ? "selected" : "" %>>
+                    Microwave
+                </option>
+
+                <option value="VSAT" <%=station && station.protocol==="VSAT" ? "selected" : "" %>>
+                    VSAT
+                </option>
+
+                <option value="4G" <%=station && station.protocol==="4G" ? "selected" : "" %>>
+                    4G
+                </option>
+
+                <option value="5G" <%=station && station.protocol==="5G" ? "selected" : "" %>>
+                    5G
+                </option>
+
+                <option value="Other" <%=station && station.protocol==="Other" ? "selected" : "" %>>
+                    Other
+                </option>
+
+            </select>
+
+        </div>
+
+        <div class="form-actions">
+
+            <button class="btn btn-primary">
+
+                Save Station
+
+            </button>
+
+            <a href="/centers/<%= centerId %>" class="btn btn-secondary">
+
+                Cancel
+
+            </a>
+
+        </div>
+
+    </form>
+
+</div>

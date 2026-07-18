@@ -1,6 +1,7 @@
 const PDFDocument = require("pdfkit");
 const ExcelJS = require("exceljs");
 const Report = require("../models/reportModel");
+
 exports.dailyPDF = (req, res) => {
   const filters = {
     date: req.query.date || "",
@@ -10,10 +11,8 @@ exports.dailyPDF = (req, res) => {
     search: req.query.search || "",
   };
 
-  Report.getDailyReport(filters, (err, activities) => {
+  Report.getDailyReport(req.session.user.id, filters, (err, activities) => {
     if (err) return res.send(err.message);
-
-    const PDFDocument = require("pdfkit");
 
     const doc = new PDFDocument({
       margin: 40,
@@ -21,17 +20,12 @@ exports.dailyPDF = (req, res) => {
     });
 
     res.setHeader("Content-Type", "application/pdf");
-
     res.setHeader(
       "Content-Disposition",
       "attachment; filename=daily-report.pdf",
     );
 
     doc.pipe(res);
-
-    // ==========================
-    // Title
-    // ==========================
 
     doc.fontSize(22).text("WORK JOURNAL", {
       align: "center",
@@ -46,10 +40,6 @@ exports.dailyPDF = (req, res) => {
     doc.fontSize(10).text("Generated: " + new Date().toLocaleString());
 
     doc.moveDown();
-
-    // ==========================
-    // Table Header
-    // ==========================
 
     const startY = doc.y;
 
@@ -69,49 +59,40 @@ exports.dailyPDF = (req, res) => {
     doc.font("Helvetica");
 
     let y = startY + 25;
-
     let totalMinutes = 0;
 
     activities.forEach((activity) => {
       totalMinutes += activity.duration || 0;
 
       doc.text(activity.date || "", 40, y);
-
       doc.text(activity.project || "-", 120, y);
 
       doc.text(activity.activity || "", 240, y, {
         width: 170,
       });
 
-      doc.text((activity.duration || 0) + " min", 420, y);
-
+      doc.text(`${activity.duration || 0} min`, 420, y);
       doc.text(activity.status || "", 500, y);
 
       y += 20;
 
-      // New page if needed
       if (y > 760) {
         doc.addPage();
-
         y = 50;
       }
     });
-
-    // ==========================
-    // Summary
-    // ==========================
 
     doc.moveDown(2);
 
     doc.font("Helvetica-Bold");
 
-    doc.text("Total Activities : " + activities.length);
-
-    doc.text("Total Hours : " + (totalMinutes / 60).toFixed(1));
+    doc.text(`Total Activities: ${activities.length}`);
+    doc.text(`Total Hours: ${(totalMinutes / 60).toFixed(1)}`);
 
     doc.end();
   });
 };
+
 exports.dailyExcel = async (req, res) => {
   const filters = {
     date: req.query.date || "",
@@ -121,38 +102,40 @@ exports.dailyExcel = async (req, res) => {
     search: req.query.search || "",
   };
 
-  Report.getDailyReport(filters, async (err, activities) => {
-    if (err) return res.send(err.message);
+  Report.getDailyReport(
+    req.session.user.id,
+    filters,
+    async (err, activities) => {
+      if (err) return res.send(err.message);
 
-    const workbook = new ExcelJS.Workbook();
+      const workbook = new ExcelJS.Workbook();
+      const sheet = workbook.addWorksheet("Daily Report");
 
-    const sheet = workbook.addWorksheet("Daily Report");
+      sheet.columns = [
+        { header: "Date", key: "date", width: 15 },
+        { header: "Project", key: "project", width: 25 },
+        { header: "Department", key: "department", width: 20 },
+        { header: "Activity", key: "activity", width: 40 },
+        { header: "Duration", key: "duration", width: 15 },
+        { header: "Status", key: "status", width: 20 },
+      ];
 
-    sheet.columns = [
-      { header: "Date", key: "date", width: 15 },
-      { header: "Project", key: "project", width: 25 },
-      { header: "Department", key: "department", width: 20 },
-      { header: "Activity", key: "activity", width: 40 },
-      { header: "Duration", key: "duration", width: 15 },
-      { header: "Status", key: "status", width: 20 },
-    ];
+      activities.forEach((activity) => {
+        sheet.addRow(activity);
+      });
 
-    activities.forEach((activity) => {
-      sheet.addRow(activity);
-    });
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      );
 
-    res.setHeader(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    );
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=daily-report.xlsx",
+      );
 
-    res.setHeader(
-      "Content-Disposition",
-      "attachment; filename=daily-report.xlsx",
-    );
-
-    await workbook.xlsx.write(res);
-
-    res.end();
-  });
+      await workbook.xlsx.write(res);
+      res.end();
+    },
+  );
 };

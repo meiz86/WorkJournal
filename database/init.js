@@ -102,4 +102,64 @@ db.serialize(() => {
       FOREIGN KEY (department_id) REFERENCES departments(id)
     );
   `);
+  // ===========================
+  // Centers
+  // ===========================
+  db.run(`
+CREATE TABLE IF NOT EXISTS centers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    acronym TEXT NOT NULL,
+    details TEXT,
+    is_active INTEGER DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+`);
+  // ===========================
+  // Stations
+  // ===========================
+  // ===========================
+  // Stations
+  // ===========================
+
+  db.run(`
+  CREATE TABLE IF NOT EXISTS stations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    center_id INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    protocol TEXT,
+    notes TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY(center_id)
+      REFERENCES centers(id)
+      ON DELETE CASCADE
+  );
+`);
+  // ===========================
+  // Hardware
+  // ===========================
+  db.run(`
+CREATE TABLE IF NOT EXISTS hardware (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    center_id INTEGER NOT NULL,
+
+    type TEXT NOT NULL,
+    name TEXT NOT NULL,
+
+    brand TEXT,
+    model TEXT,
+    serial_number TEXT,
+    ip_address TEXT,
+
+    notes TEXT,
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY(center_id)
+        REFERENCES centers(id)
+        ON DELETE CASCADE
+);
+`);
 });

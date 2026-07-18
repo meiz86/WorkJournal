@@ -1,0 +1,228 @@
+<div class="page-header">
+
+    <div>
+
+        <h1>
+            <%= dashboard.center.name %>
+        </h1>
+
+        <p>
+            <%= dashboard.center.acronym %>
+        </p>
+
+    </div>
+
+    <div>
+
+        <a href="/centers/edit/<%= dashboard.center.id %>" class="btn btn-primary">
+
+            Edit Center
+
+        </a>
+
+        <a href="/centers" class="btn btn-secondary">
+
+            Back
+
+        </a>
+
+    </div>
+
+</div>
+
+<div class="panel">
+
+    <h2>Center Details</h2>
+
+    <p>
+
+        <%= dashboard.center.details || "-" %>
+
+    </p>
+
+</div>
+
+<!-- ========================= -->
+<!-- Stations -->
+<!-- ========================= -->
+
+<div class="panel">
+
+    <div class="panel-header">
+
+        <h2>
+
+            Stations
+
+        </h2>
+
+        <a href="/centers/<%= dashboard.center.id %>/stations/new" class="btn btn-primary">
+
+            + Add Station
+
+        </a>
+
+    </div>
+
+    <table class="dashboard-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Name</th>
+
+                <th>Protocol</th>
+
+                <th>Actions</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <% if(dashboard.stations.length===0){ %>
+
+                <tr>
+
+                    <td colspan="3">
+
+                        No stations added.
+
+                    </td>
+
+                </tr>
+
+                <% } %>
+
+                    <% dashboard.stations.forEach(station=>{ %>
+
+                        <tr>
+
+                            <td>
+
+                                <%= station.name %>
+
+                            </td>
+
+                            <td>
+
+                                <%= station.protocol %>
+
+                            </td>
+
+                            <td>
+
+                                <a href="/stations/edit/<%= station.id %>" class="btn btn-primary btn-sm">
+
+                                    <i class="fa-solid fa-pen"></i>
+
+                                </a>
+
+                                <a href="/stations/delete/<%= station.id %>" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Delete this station?')">
+
+                                    <i class="fa-solid fa-trash"></i>
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        <% }) %>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<!-- ========================= -->
+<!-- Hardware -->
+<!-- ========================= -->
+
+<div class="panel">
+
+    <div class="panel-header">
+
+        <h2>
+
+            Hardware
+
+        </h2>
+
+        <a href="/centers/<%= dashboard.center.id %>/hardware/new" class="btn btn-primary">
+
+            + Add Hardware
+
+        </a>
+
+    </div>
+
+    <table class="dashboard-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Type</th>
+
+                <th>Name</th>
+
+                <th>IP Address</th>
+
+                <th>Actions</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <% if(dashboard.hardware.length===0){ %>
+
+                <tr>
+
+                    <td colspan="4">
+
+                        No hardware added.
+
+                    </td>
+
+                </tr>
+
+                <% } %>
+
+                    <% dashboard.hardware.forEach(item=>{ %>
+
+                        <tr>
+
+                            <td>
+                                <%= item.type %>
+                            </td>
+
+                            <td>
+                                <%= item.name %>
+                            </td>
+
+                            <td>
+                                <%= item.ip_address || "-" %>
+                            </td>
+
+                            <td>
+
+                                ...
+
+                            </td>
+
+                        </tr>
+
+                        <% }) %>
+
+        </tbody>
+
+    </table>
+
+</div>

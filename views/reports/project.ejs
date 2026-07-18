@@ -1,5 +1,7 @@
 <div class="page-header">
+
     <h1>Project Report</h1>
+
 </div>
 
 <form method="GET" action="/reports/project" class="filter-bar">
@@ -8,17 +10,15 @@
 
         <option value="">All Projects</option>
 
-        <% projects.forEach(project => { %>
+        <% projects.forEach(project=> { %>
 
-            <option
-                value="<%= project.id %>"
-                <%= projectId == project.id ? "selected" : "" %>>
+            <option value="<%= project.id %>" <%=projectId==project.id ? "selected" : "" %>>
 
                 <%= project.name %>
 
             </option>
 
-        <% }) %>
+            <% }) %>
 
     </select>
 
@@ -34,7 +34,9 @@
 
         <h3>Projects</h3>
 
-        <h1><%= report.length %></h1>
+        <h1>
+            <%= report.length %>
+        </h1>
 
     </div>
 
@@ -44,9 +46,7 @@
 
         <h1>
 
-        <%= (
-            report.reduce((t,r)=>t+(r.minutes||0),0)/60
-        ).toFixed(1) %>
+            <%= (report.reduce((t, r)=> t + (r.minutes || 0), 0) / 60).toFixed(1) %>
 
         </h1>
 
@@ -64,51 +64,77 @@
 
 <div class="panel">
 
-<table class="dashboard-table">
+    <table class="dashboard-table">
 
-<thead>
+        <thead>
 
-<tr>
+            <tr>
 
-<th>Project</th>
-<th>Activities</th>
-<th>Hours</th>
-<th>Completed</th>
-<th>Pending</th>
+                <th>Project</th>
+                <th>Activities</th>
+                <th>Hours</th>
+                <th>Completed</th>
+                <th>Pending</th>
 
-</tr>
+            </tr>
 
-</thead>
+        </thead>
 
-<tbody>
+        <tbody>
 
-<% report.forEach(project => { %>
+            <% if (report.length===0) { %>
 
-<tr>
+                <tr>
 
-<td><%= project.project %></td>
+                    <td colspan="5">
 
-<td><%= project.activities %></td>
+                        No project data available.
 
-<td><%= ((project.minutes||0)/60).toFixed(1) %></td>
+                    </td>
 
-<td><%= project.completed %></td>
+                </tr>
 
-<td><%= project.pending %></td>
+                <% } else { %>
 
-</tr>
+                    <% report.forEach(project=> { %>
 
-<% }) %>
+                        <tr>
 
-</tbody>
+                            <td>
+                                <%= project.project %>
+                            </td>
 
-</table>
+                            <td>
+                                <%= project.activities %>
+                            </td>
+
+                            <td>
+                                <%= ((project.minutes || 0) / 60).toFixed(1) %>
+                            </td>
+
+                            <td>
+                                <%= project.completed %>
+                            </td>
+
+                            <td>
+                                <%= project.pending %>
+                            </td>
+
+                        </tr>
+
+                        <% }) %>
+
+                            <% } %>
+
+        </tbody>
+
+    </table>
 
 </div>
 
 <script>
 
-window.projectData = <%- JSON.stringify(report) %>;
+    window.projectData = <% - JSON.stringify(report) %>;
 
 </script>
 
