@@ -3,11 +3,8 @@
     <h1>Edit Task</h1>
 
     <a href="/tasks" class="btn btn-secondary">
-
         <i class="fa-solid fa-arrow-left"></i>
-
         Back
-
     </a>
 
 </div>
@@ -16,6 +13,10 @@
 
     action: "/tasks/" + task.id + "/edit",
 
-    task: task
+    task: task,
+
+    projects: projects,
+
+    departments: departments
 
 }) %>

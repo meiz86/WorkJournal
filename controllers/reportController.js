@@ -17,7 +17,7 @@ exports.weekly = (req, res) => {
     const firstJan = new Date(year, 0, 1);
 
     const weekNumber = Math.ceil(
-      ((today - firstJan) / 86400000 + firstJan.getDay() + 1) / 7
+      ((today - firstJan) / 86400000 + firstJan.getDay() + 1) / 7,
     );
 
     week = `${year}-W${String(weekNumber).padStart(2, "0")}`;
@@ -54,20 +54,16 @@ exports.project = (req, res) => {
   Report.getProjects((err, projects) => {
     if (err) return res.send(err.message);
 
-    Report.getProjectReport(
-      req.session.user.id,
-      projectId,
-      (err, report) => {
-        if (err) return res.send(err.message);
+    Report.getProjectReport(req.session.user.id, projectId, (err, report) => {
+      if (err) return res.send(err.message);
 
-        res.render("reports/project", {
-          title: "Project Report",
-          projects,
-          projectId,
-          report,
-        });
-      }
-    );
+      res.render("reports/project", {
+        title: "Project Report",
+        projects,
+        projectId,
+        report,
+      });
+    });
   });
 };
 
@@ -75,64 +71,56 @@ exports.daily = (req, res) => {
   const filters = {
     date: req.query.date || "",
     project_id: req.query.project_id || "",
-    department: req.query.department || "",
+    department_id: req.query.department_id || "",
     status: req.query.status || "",
     search: req.query.search || "",
   };
 
-  Report.getDailyReport(
-    req.session.user.id,
-    filters,
-    (err, activities) => {
+  Report.getDailyReport(req.session.user.id, filters, (err, activities) => {
+    if (err) return res.send(err.message);
+
+    Report.getProjects((err, projects) => {
       if (err) return res.send(err.message);
 
-      Report.getProjects((err, projects) => {
+      Report.getDepartments((err, departments) => {
         if (err) return res.send(err.message);
 
-        Report.getDepartments((err, departments) => {
-          if (err) return res.send(err.message);
-
-          res.render("reports/daily", {
-            title: "Daily Report",
-            filters,
-            activities,
-            projects,
-            departments,
-          });
+        res.render("reports/daily", {
+          title: "Daily Report",
+          filters,
+          activities,
+          projects,
+          departments,
         });
       });
-    }
-  );
+    });
+  });
 };
 
 exports.dailyPDF = (req, res) => {
   const filters = {
     date: req.query.date || "",
     project_id: req.query.project_id || "",
-    department: req.query.department || "",
+    department_id: req.query.department_id || "",
     status: req.query.status || "",
     search: req.query.search || "",
   };
 
-  Report.getDailyReport(
-    req.session.user.id,
-    filters,
-    (err, activities) => {
-      if (err) return res.send(err.message);
+  Report.getDailyReport(req.session.user.id, filters, (err, activities) => {
+    if (err) return res.send(err.message);
 
-      pdfService.generateReport(res, {
-        title: "Daily Report",
-        rows: activities,
-      });
-    }
-  );
+    pdfService.generateReport(res, {
+      title: "Daily Report",
+      rows: activities,
+    });
+  });
 };
 
 exports.dailyExcel = async (req, res) => {
   const filters = {
     date: req.query.date || "",
     project_id: req.query.project_id || "",
-    department: req.query.department || "",
+    department_id: req.query.department_id || "",
     status: req.query.status || "",
     search: req.query.search || "",
   };
@@ -161,16 +149,16 @@ exports.dailyExcel = async (req, res) => {
 
       res.setHeader(
         "Content-Type",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       );
 
       res.setHeader(
         "Content-Disposition",
-        "attachment; filename=daily-report.xlsx"
+        "attachment; filename=daily-report.xlsx",
       );
 
       await workbook.xlsx.write(res);
       res.end();
-    }
+    },
   );
 };

@@ -175,19 +175,22 @@ function getAverageHours(userId, callback) {
 
 function getCompletionRate(userId, callback) {
   const sql = `
-        SELECT
-            ROUND(
-                SUM(
-                    CASE
-                        WHEN status='Completed'
-                        THEN 1
-                        ELSE 0
-                    END
-                )*100.0/
-                COUNT(*)
-            ,1) AS rate
-        FROM tasks
-        WHERE user_id = ?
+SELECT
+    CASE
+        WHEN COUNT(*) = 0 THEN 0
+        ELSE ROUND(
+            SUM(
+                CASE
+                    WHEN status = 'Completed'
+                    THEN 1
+                    ELSE 0
+                END
+            ) * 100.0 / COUNT(*),
+            1
+        )
+    END AS rate
+FROM tasks
+WHERE user_id = ?
     `;
 
   db.get(sql, [userId], callback);

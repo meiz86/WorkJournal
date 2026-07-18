@@ -1,16 +1,20 @@
 const db = require("../database/db");
 
+// ============================
+// Create User
+// ============================
+
 function createUser(user, callback) {
   const sql = `
-        INSERT INTO users
-        (
-            name,
-            email,
-            password,
-            role
-        )
-        VALUES (?, ?, ?, ?)
-    `;
+    INSERT INTO users
+    (
+      name,
+      email,
+      password,
+      role
+    )
+    VALUES (?, ?, ?, ?)
+  `;
 
   db.run(
     sql,
@@ -21,22 +25,30 @@ function createUser(user, callback) {
   );
 }
 
+// ============================
+// Find User by Email
+// ============================
+
 function findByEmail(email, callback) {
   const sql = `
-        SELECT *
-        FROM users
-        WHERE email = ?
-    `;
+    SELECT *
+    FROM users
+    WHERE email = ?
+  `;
 
   db.get(sql, [email], callback);
 }
 
+// ============================
+// Find User by ID
+// ============================
+
 function findById(id, callback) {
   const sql = `
-        SELECT *
-        FROM users
-        WHERE id = ?
-    `;
+    SELECT *
+    FROM users
+    WHERE id = ?
+  `;
 
   db.get(sql, [id], callback);
 }

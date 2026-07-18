@@ -1,5 +1,4 @@
 <div class="page-header">
-    
 
     <h1>Projects</h1>
 
@@ -11,37 +10,38 @@
 </div>
 
 <div class="panel">
-<div class="table-toolbar">
 
-    <input
-        type="text"
-        id="projectSearch"
-        placeholder="Search projects...">
+    <div class="table-toolbar">
 
-</div>
+        <input
+            type="text"
+            id="projectSearch"
+            placeholder="Search projects...">
+
+    </div>
+
     <table class="dashboard-table">
 
         <thead>
 
             <tr>
-
                 <th>Name</th>
-               <th>Code</th>
-               <th>Status</th>
-               <th>Created</th>
+                <th>Client</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>End Date</th>
                 <th>Actions</th>
-
             </tr>
 
         </thead>
 
         <tbody>
 
-        <% if(projects.length===0){ %>
+        <% if (projects.length === 0) { %>
 
             <tr>
 
-                <td colspan="6">
+                <td colspan="6" style="text-align:center;">
                     No projects found.
                 </td>
 
@@ -49,67 +49,77 @@
 
         <% } %>
 
-        <% projects.forEach(project=>{ %>
+        <% projects.forEach(project => { %>
 
             <tr>
 
                 <td>
-<span
-    class="project-color"
-    style="background:<%= project.color || '#2563eb' %>">
-</span>
-    <span class="project-color"></span>
 
-    <a href="/projects/<%= project.id %>">
+                    <span
+                        class="project-color"
+                        style="background:<%= project.color || '#2563eb' %>">
+                    </span>
 
-        <%= project.name %>
+                    <a href="/projects/<%= project.id %>">
+                        <%= project.name %>
+                    </a>
 
-    </a>
+                </td>
 
-</td>
-
-                <td><%= project.code || "-" %></td>
-
-              <td>
-
-    <% if(project.is_active){ %>
-
-        <span class="status-badge status-active">
-
-            Active
-
-        </span>
-
-    <% }else{ %>
-
-        <span class="status-badge status-inactive">
-
-            Inactive
-
-        </span>
-
-    <% } %>
-
-</td>
-
-<td><%= project.created_at.substring(0,10) %></td>
-                <td><%= project.end_date || "-" %></td>
+                <td>
+                    <%= project.client || "-" %>
+                </td>
 
                 <td>
 
-                    <a href="/projects/edit/<%= project.id %>" class="btn-edit">
+                    <%
+                        let badge = "status-active";
+
+                        if(project.status === "On Hold")
+                            badge = "status-warning";
+
+                        if(project.status === "Completed")
+                            badge = "status-success";
+
+                        if(project.status === "Archived")
+                            badge = "status-inactive";
+                    %>
+
+                    <span class="status-badge <%= badge %>">
+                        <%= project.status %>
+                    </span>
+
+                </td>
+
+                <td>
+                    <%= new Date(project.created_at).toLocaleDateString() %>
+                </td>
+
+                <td>
+                    <%= project.end_date || "-" %>
+                </td>
+
+                <td>
+
+                    <a
+                        href="/projects/edit/<%= project.id %>"
+                        class="btn-edit"
+                        title="Edit">
 
                         <i class="fa-solid fa-pen"></i>
 
                     </a>
 
-                    <a href="/projects/delete/<%= project.id %>"
-                       class="btn-delete"
-                       onclick="return confirm('Delete this project?')">
+   <form action="/projects/delete/<%= project.id %>" method="POST" style="display:inline;">
+    <button
+        type="submit"
+        class="btn-delete"
+        onclick="return confirm('Delete this project?')">
 
-                        <i class="fa-solid fa-trash"></i>
+        <i class="fa-solid fa-trash"></i>
 
-                    </a>
+    </button>
+</form>
 
                 </td>
 
@@ -122,6 +132,7 @@
     </table>
 
 </div>
+
 <script>
 
 const search = document.getElementById("projectSearch");
@@ -132,10 +143,9 @@ search.addEventListener("keyup", function () {
 
     document.querySelectorAll(".dashboard-table tbody tr").forEach(row => {
 
-        row.style.display =
-            row.innerText.toLowerCase().includes(value)
-                ? ""
-                : "none";
+        row.style.display = row.innerText.toLowerCase().includes(value)
+            ? ""
+            : "none";
 
     });
 

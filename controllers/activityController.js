@@ -1,13 +1,24 @@
 const Activity = require("../models/activityModel");
+const Project = require("../models/projectModel");
+const Department = require("../models/departmentModel");
 const { STATUS } = require("../config/constants");
 
 exports.showForm = (req, res) => {
-  res.render("activities/new", {
-    title: "Add Activity",
-    statuses: STATUS,
+  Project.getAll(req.session.user.id, (err, projects) => {
+    if (err) return res.send(err.message);
+
+    Department.getAll((err, departments) => {
+      if (err) return res.send(err.message);
+
+      res.render("activities/new", {
+        title: "Add Activity",
+        statuses: STATUS,
+        projects,
+        departments,
+      });
+    });
   });
 };
-
 exports.create = (req, res) => {
   req.body.user_id = req.session.user.id;
 

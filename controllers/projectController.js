@@ -18,6 +18,8 @@ exports.newForm = (req, res) => {
 };
 
 exports.create = (req, res) => {
+  req.body.user_id = req.session.user.id;
+
   Project.create(req.body, (err) => {
     if (err) return res.send(err.message);
 
@@ -26,19 +28,22 @@ exports.create = (req, res) => {
 };
 
 exports.editForm = (req, res) => {
-  Project.getById(req.params.id, (err, project) => {
+  Project.getById(req.params.id, req.session.user.id, (err, project) => {
     if (err) return res.send(err.message);
+
+    if (!project) {
+      return res.status(404).send("Project not found.");
+    }
 
     res.render("projects/edit", {
       title: "Edit Project",
-
       project,
     });
   });
 };
 
 exports.update = (req, res) => {
-  Project.update(req.params.id, req.body, (err) => {
+  Project.update(req.params.id, req.session.user.id, req.body, (err) => {
     if (err) return res.send(err.message);
 
     res.redirect("/projects");
@@ -46,19 +51,23 @@ exports.update = (req, res) => {
 };
 
 exports.delete = (req, res) => {
-  Project.remove(req.params.id, (err) => {
+  Project.remove(req.params.id, req.session.user.id, (err) => {
     if (err) return res.send(err.message);
 
     res.redirect("/projects");
   });
 };
+
 exports.details = (req, res) => {
-  Project.getDashboard(req.params.id, (err, dashboard) => {
+  Project.getDashboard(req.params.id, req.session.user.id, (err, dashboard) => {
     if (err) return res.send(err.message);
+
+    if (!dashboard) {
+      return res.status(404).send("Project not found.");
+    }
 
     res.render("projects/dashboard", {
       title: dashboard.project.name,
-
       dashboard,
     });
   });

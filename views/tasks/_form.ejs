@@ -3,7 +3,6 @@
     <form action="<%= action %>" method="POST">
 
         <div class="form-group">
-
             <label>Title</label>
 
             <input
@@ -11,58 +10,82 @@
                 name="title"
                 value="<%= task ? task.title : '' %>"
                 required>
-
         </div>
 
         <div class="form-group">
-
             <label>Description</label>
 
             <textarea
-                name="description"><%= task ? task.description : '' %></textarea>
-
+                name="description"
+                rows="4"><%= task ? task.description : '' %></textarea>
         </div>
 
         <div class="form-group">
-
             <label>Project</label>
 
-            <input
-                type="text"
-                name="project"
-                value="<%= task ? task.project : '' %>">
+            <select name="project_id" required>
+
+                <option value="">-- Select Project --</option>
+
+                <% projects.forEach(project => { %>
+
+                    <option
+                        value="<%= project.id %>"
+                        <%= task && task.project_id == project.id ? "selected" : "" %>>
+
+                        <%= project.name %>
+
+                    </option>
+
+                <% }) %>
+
+            </select>
 
         </div>
 
         <div class="form-group">
-
             <label>Department</label>
 
-            <input
-                type="text"
-                name="department"
-                value="<%= task ? task.department : '' %>">
+            <select name="department_id" required>
+
+                <option value="">-- Select Department --</option>
+
+                <% departments.forEach(department => { %>
+
+                    <option
+                        value="<%= department.id %>"
+                        <%= task && task.department_id == department.id ? "selected" : "" %>>
+
+                        <%= department.name %>
+
+                    </option>
+
+                <% }) %>
+
+            </select>
 
         </div>
 
         <div class="form-group">
-
             <label>Priority</label>
 
             <select name="priority">
 
-                <option value="Low"
-                    <%= task && task.priority === 'Low' ? 'selected' : '' %>>
+                <option
+                    value="Low"
+                    <%= task && task.priority === "Low" ? "selected" : "" %>>
                     Low
                 </option>
 
-                <option value="Medium"
-                    <%= !task || task.priority === 'Medium' ? 'selected' : '' %>>
+                <option
+                    value="Medium"
+                    <%= !task || task.priority === "Medium" ? "selected" : "" %>>
                     Medium
                 </option>
 
-                <option value="High"
-                    <%= task && task.priority === 'High' ? 'selected' : '' %>>
+                <option
+                    value="High"
+                    <%= task && task.priority === "High" ? "selected" : "" %>>
                     High
                 </option>
 
@@ -71,23 +94,25 @@
         </div>
 
         <div class="form-group">
-
             <label>Status</label>
 
             <select name="status">
 
-                <option value="Pending"
-                    <%= task && task.status === 'Pending' ? 'selected' : '' %>>
+                <option
+                    value="Pending"
+                    <%= !task || task.status === "Pending" ? "selected" : "" %>>
                     Pending
                 </option>
 
-                <option value="In Progress"
-                    <%= task && task.status === 'In Progress' ? 'selected' : '' %>>
+                <option
+                    value="In Progress"
+                    <%= task && task.status === "In Progress" ? "selected" : "" %>>
                     In Progress
                 </option>
 
-                <option value="Completed"
-                    <%= task && task.status === 'Completed' ? 'selected' : '' %>>
+                <option
+                    value="Completed"
+                    <%= task && task.status === "Completed" ? "selected" : "" %>>
                     Completed
                 </option>
 
@@ -96,25 +121,26 @@
         </div>
 
         <div class="form-group">
-
             <label>Due Date</label>
 
             <input
                 type="date"
                 name="due_date"
                 value="<%= task ? task.due_date : '' %>">
-
         </div>
 
-        <button
-            class="btn btn-primary"
-            type="submit">
+        <div class="form-actions">
 
-            <i class="fa-solid fa-floppy-disk"></i>
+            <button class="btn btn-primary" type="submit">
+                <i class="fa-solid fa-floppy-disk"></i>
+                Save Task
+            </button>
 
-            Save Task
+            <a href="/tasks" class="btn btn-secondary">
+                Cancel
+            </a>
 
-        </button>
+        </div>
 
     </form>
 

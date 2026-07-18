@@ -1,20 +1,29 @@
 const db = require("../database/db");
 
+// ============================
+// Daily Report
+// ============================
+
 function getDailyReport(userId, filters, callback) {
   let sql = `
-        SELECT
-            a.date,
-            p.name AS project,
-            a.department,
-            a.activity,
-            a.description,
-            a.duration,
-            a.status
-        FROM activities a
-        LEFT JOIN projects p
-            ON a.project_id = p.id
-        WHERE a.user_id = ?
-    `;
+    SELECT
+      a.date,
+      p.name AS project,
+      d.name AS department,
+      a.activity,
+      a.description,
+      a.duration,
+      a.status
+    FROM activities a
+
+    LEFT JOIN projects p
+      ON a.project_id = p.id
+
+    LEFT JOIN departments d
+      ON a.department_id = d.id
+
+    WHERE a.user_id = ?
+  `;
 
   const params = [userId];
 
@@ -28,9 +37,9 @@ function getDailyReport(userId, filters, callback) {
     params.push(filters.project_id);
   }
 
-  if (filters.department) {
-    sql += " AND a.department = ?";
-    params.push(filters.department);
+  if (filters.department_id) {
+    sql += " AND a.department_id = ?";
+    params.push(filters.department_id);
   }
 
   if (filters.status) {
@@ -39,125 +48,162 @@ function getDailyReport(userId, filters, callback) {
   }
 
   if (filters.search) {
-    sql += " AND a.activity LIKE ?";
-    params.push("%" + filters.search + "%");
+    sql += `
+      AND (
+        a.activity LIKE ?
+        OR a.description LIKE ?
+      )
+    `;
+
+    params.push(`%${filters.search}%`, `%${filters.search}%`);
   }
 
-  sql += " ORDER BY a.start_time";
+  sql += `
+    ORDER BY a.date DESC,
+             a.start_time DESC
+  `;
 
-  db.all(sql, params, (err, activities) => {
-    if (err) return callback(err);
-
-    callback(null, activities);
-  });
+  db.all(sql, params, callback);
 }
+
+// ============================
+// Projects
+// ============================
 
 function getProjects(callback) {
-  const sql = `
-        SELECT
-            id,
-            name
-        FROM projects
-        WHERE is_active = 1
-        ORDER BY name
-    `;
-
-  db.all(sql, [], callback);
+  db.all(
+    `
+    SELECT
+      id,
+      name
+    FROM projects
+    WHERE is_active = 1
+    ORDER BY name
+    `,
+    [],
+    callback,
+  );
 }
+
+// ============================
+// Departments
+// ============================
 
 function getDepartments(callback) {
-  const sql = `
-        SELECT DISTINCT
-            department
-        FROM activities
-        WHERE department IS NOT NULL
-          AND department <> ''
-        ORDER BY department
-    `;
-
-  db.all(sql, [], callback);
+  db.all(
+    `
+    SELECT
+      id,
+      name
+    FROM departments
+    WHERE is_active = 1
+    ORDER BY name
+    `,
+    [],
+    callback,
+  );
 }
+
+// ============================
+// Weekly Report
+// ============================
 
 function getWeeklyReport(userId, week, callback) {
-  const sql = `
-        SELECT
-            date,
-            COUNT(*) AS activities,
-            SUM(duration) AS minutes,
-            SUM(CASE WHEN status='Completed' THEN 1 ELSE 0 END) AS completed,
-            SUM(CASE WHEN status!='Completed' THEN 1 ELSE 0 END) AS pending
-        FROM activities
-        WHERE user_id = ?
-          AND strftime('%Y-%W', date) = strftime('%Y-%W','now')
-        GROUP BY date
-        ORDER BY date
+  let sql = `
+    SELECT
+      date,
+      COUNT(*) AS activities,
+      SUM(duration) AS minutes,
+      SUM(CASE WHEN status='Completed' THEN 1 ELSE 0 END) AS completed,
+      SUM(CASE WHEN status!='Completed' THEN 1 ELSE 0 END) AS pending
+    FROM activities
+    WHERE user_id = ?
+  `;
+
+  const params = [userId];
+
+  if (week) {
+    const [year, weekNo] = week.split("-W");
+
+    sql += `
+      AND strftime('%Y', date) = ?
+      AND strftime('%W', date) = ?
     `;
 
-  db.all(sql, [userId], (err, rows) => {
-    if (err) return callback(err);
+    params.push(year, weekNo);
+  }
 
-    callback(null, rows);
-  });
+  sql += `
+    GROUP BY date
+    ORDER BY date
+  `;
+
+  db.all(sql, params, callback);
 }
+
+// ============================
+// Monthly Report
+// ============================
 
 function getMonthlyReport(userId, month, callback) {
   let sql = `
-        SELECT
-            date,
-            COUNT(*) AS activities,
-            SUM(duration) AS minutes,
-            SUM(CASE WHEN status='Completed' THEN 1 ELSE 0 END) AS completed,
-            SUM(CASE WHEN status!='Completed' THEN 1 ELSE 0 END) AS pending
-        FROM activities
-        WHERE user_id = ?
-    `;
+    SELECT
+      date,
+      COUNT(*) AS activities,
+      SUM(duration) AS minutes,
+      SUM(CASE WHEN status='Completed' THEN 1 ELSE 0 END) AS completed,
+      SUM(CASE WHEN status!='Completed' THEN 1 ELSE 0 END) AS pending
+    FROM activities
+    WHERE user_id = ?
+  `;
 
   const params = [userId];
 
   if (month) {
-    sql += ` AND strftime('%Y-%m', date) = ?`;
+    sql += " AND strftime('%Y-%m', date) = ?";
     params.push(month);
   } else {
-    sql += ` AND strftime('%Y-%m', date) = strftime('%Y-%m','now')`;
+    sql += " AND strftime('%Y-%m', date) = strftime('%Y-%m','now')";
   }
 
   sql += `
-        GROUP BY date
-        ORDER BY date
-    `;
+    GROUP BY date
+    ORDER BY date
+  `;
 
-  db.all(sql, params, (err, rows) => {
-    if (err) return callback(err);
-
-    callback(null, rows);
-  });
+  db.all(sql, params, callback);
 }
+
+// ============================
+// Project Report
+// ============================
 
 function getProjectReport(userId, projectId, callback) {
   let sql = `
-        SELECT
-            p.name AS project,
-            COUNT(a.id) AS activities,
-            SUM(a.duration) AS minutes,
-            SUM(CASE WHEN a.status='Completed' THEN 1 ELSE 0 END) AS completed,
-            SUM(CASE WHEN a.status!='Completed' THEN 1 ELSE 0 END) AS pending
-        FROM projects p
-        LEFT JOIN activities a
-            ON p.id = a.project_id
-           AND a.user_id = ?
-    `;
+    SELECT
+      p.name AS project,
+      COUNT(a.id) AS activities,
+      IFNULL(SUM(a.duration), 0) AS minutes,
+      SUM(CASE WHEN a.status='Completed' THEN 1 ELSE 0 END) AS completed,
+      SUM(CASE WHEN a.status!='Completed' THEN 1 ELSE 0 END) AS pending
+    FROM projects p
+
+    LEFT JOIN activities a
+      ON p.id = a.project_id
+     AND a.user_id = ?
+  `;
 
   const params = [userId];
 
   if (projectId) {
-    sql += ` WHERE p.id = ?`;
+    sql += " WHERE p.id = ?";
     params.push(projectId);
   }
 
   sql += `
-        GROUP BY p.id
-        ORDER BY p.name
-    `;
+    GROUP BY p.id
+    ORDER BY p.name
+  `;
 
   db.all(sql, params, callback);
 }

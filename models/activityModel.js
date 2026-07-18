@@ -13,7 +13,7 @@ function createActivity(activity, callback) {
       date,
       start_time,
       end_time,
-      department,
+      department_id,
       activity,
       description,
       duration,
@@ -30,7 +30,7 @@ function createActivity(activity, callback) {
       activity.date,
       activity.start_time,
       activity.end_time,
-      activity.department,
+      activity.department_id,
       activity.activity,
       activity.description,
       activity.duration,
@@ -38,7 +38,7 @@ function createActivity(activity, callback) {
     ],
     function (err) {
       callback(err, this.lastID);
-    }
+    },
   );
 }
 
@@ -48,13 +48,20 @@ function createActivity(activity, callback) {
 
 function getActivities(filters, userId, callback) {
   let sql = `
-    SELECT
-      a.*,
-      p.name AS project
-    FROM activities a
-    LEFT JOIN projects p
-      ON a.project_id = p.id
-    WHERE a.user_id = ?
+SELECT
+    a.*,
+    p.name AS project,
+    d.name AS department
+
+FROM activities a
+
+LEFT JOIN projects p
+    ON a.project_id = p.id
+
+LEFT JOIN departments d
+    ON a.department_id = d.id
+
+WHERE a.user_id = ?
   `;
 
   const params = [userId];
@@ -63,7 +70,7 @@ function getActivities(filters, userId, callback) {
     sql += `
       AND (
         p.name LIKE ?
-        OR a.department LIKE ?
+        OR d.name LIKE ?
         OR a.activity LIKE ?
         OR a.description LIKE ?
       )

@@ -1,25 +1,45 @@
 const db = require("../database/db");
 
+// ============================
+// Get All Tasks
+// ============================
+
 function getAllTasks(userId, callback) {
   const sql = `
-    SELECT *
-    FROM tasks
-    WHERE user_id = ?
-    ORDER BY due_date ASC
+    SELECT
+      t.*,
+      p.name AS project,
+      d.name AS department
+
+    FROM tasks t
+
+    LEFT JOIN projects p
+      ON p.id = t.project_id
+
+    LEFT JOIN departments d
+      ON d.id = t.department_id
+
+    WHERE t.user_id = ?
+
+    ORDER BY t.due_date ASC
   `;
 
   db.all(sql, [userId], callback);
 }
+
+// ============================
+// Create Task
+// ============================
 
 function createTask(task, callback) {
   const sql = `
     INSERT INTO tasks
     (
       user_id,
+      project_id,
+      department_id,
       title,
       description,
-      project,
-      department,
       priority,
       status,
       due_date
@@ -31,10 +51,10 @@ function createTask(task, callback) {
     sql,
     [
       task.user_id,
+      task.project_id,
+      task.department_id,
       task.title,
       task.description,
-      task.project,
-      task.department,
       task.priority,
       task.status,
       task.due_date,
@@ -43,37 +63,74 @@ function createTask(task, callback) {
   );
 }
 
+// ============================
+// Upcoming Tasks
+// ============================
+
 function getUpcomingTasks(userId, limit, callback) {
   const sql = `
-    SELECT *
-    FROM tasks
-    WHERE user_id = ?
-      AND status != 'Completed'
-    ORDER BY due_date ASC
+    SELECT
+      t.*,
+      p.name AS project,
+      d.name AS department
+
+    FROM tasks t
+
+    LEFT JOIN projects p
+      ON p.id = t.project_id
+
+    LEFT JOIN departments d
+      ON d.id = t.department_id
+
+    WHERE t.user_id = ?
+      AND t.status != 'Completed'
+
+    ORDER BY t.due_date ASC
+
     LIMIT ?
   `;
 
   db.all(sql, [userId, limit], callback);
 }
 
+// ============================
+// Get Task By ID
+// ============================
+
 function getTaskById(id, userId, callback) {
   const sql = `
-        SELECT *
-        FROM tasks
-        WHERE id = ?
-        AND user_id = ?
-    `;
+    SELECT
+      t.*,
+      p.name AS project,
+      d.name AS department
+
+    FROM tasks t
+
+    LEFT JOIN projects p
+      ON p.id = t.project_id
+
+    LEFT JOIN departments d
+      ON d.id = t.department_id
+
+    WHERE t.id = ?
+      AND t.user_id = ?
+  `;
 
   db.get(sql, [id, userId], callback);
 }
+
+// ============================
+// Update Task
+// ============================
+
 function updateTask(id, userId, task, callback) {
   const sql = `
     UPDATE tasks
     SET
+      project_id = ?,
+      department_id = ?,
       title = ?,
       description = ?,
-      project = ?,
-      department = ?,
       priority = ?,
       status = ?,
       due_date = ?
@@ -84,10 +141,10 @@ function updateTask(id, userId, task, callback) {
   db.run(
     sql,
     [
+      task.project_id,
+      task.department_id,
       task.title,
       task.description,
-      task.project,
-      task.department,
       task.priority,
       task.status,
       task.due_date,
@@ -98,26 +155,34 @@ function updateTask(id, userId, task, callback) {
   );
 }
 
+// ============================
+// Complete Task
+// ============================
+
 function completeTask(id, userId, callback) {
   db.run(
     `
-        UPDATE tasks
-        SET status = 'Completed'
-        WHERE id = ?
+      UPDATE tasks
+      SET status = 'Completed'
+      WHERE id = ?
         AND user_id = ?
-        `,
+    `,
     [id, userId],
     callback,
   );
 }
 
+// ============================
+// Delete Task
+// ============================
+
 function deleteTask(id, userId, callback) {
   db.run(
     `
-        DELETE FROM tasks
-        WHERE id = ?
+      DELETE FROM tasks
+      WHERE id = ?
         AND user_id = ?
-        `,
+    `,
     [id, userId],
     callback,
   );

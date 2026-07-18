@@ -19,7 +19,6 @@ const reportRoutes = require("./routes/reports");
 const exportRoutes = require("./routes/export");
 const calendarRoutes = require("./routes/calendar");
 
-
 const requireLogin = require("./middleware/auth");
 
 const PORT = 3000;
@@ -46,7 +45,7 @@ app.use(
     secret: "workjournal-secret-key",
     resave: false,
     saveUninitialized: false,
-  })
+  }),
 );
 
 // Global variables
@@ -81,7 +80,19 @@ app.use("/export", requireLogin, exportRoutes);
 // ======================================
 // Server
 // ======================================
+// app.use((req, res) => {
+//   res.status(404).render("errors/404", {
+//     title: "Page Not Found",
+//   });
+// });
+// app.use((err, req, res, next) => {
+//   console.error(err);
 
+//   res.status(500).render("errors/500", {
+//     title: "Server Error",
+//     error: process.env.NODE_ENV === "development" ? err : null,
+//   });
+// });
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });

@@ -1,0 +1,109 @@
+<form action="<%= action %>" method="POST">
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>Project Name</label>
+<input
+    type="text"
+    name="name"
+    value="<%= project ? project.name : '' %>"
+    required>
+</div>
+
+<div class="form-group">
+<label>Client</label>
+<input
+    type="text"
+    name="client"
+    value="<%= project ? project.client : '' %>">
+</div>
+
+<div class="form-group">
+<label>Status</label>
+
+<select name="status">
+
+<option value="Active"
+<%= project && project.status==="Active" ? "selected" : "" %>>
+Active
+</option>
+
+<option value="On Hold"
+<%= project && project.status==="On Hold" ? "selected" : "" %>>
+On Hold
+</option>
+
+<option value="Completed"
+<%= project && project.status==="Completed" ? "selected" : "" %>>
+Completed
+</option>
+
+<option value="Archived"
+<%= project && project.status==="Archived" ? "selected" : "" %>>
+Archived
+</option>
+
+</select>
+
+</div>
+
+<div class="form-group">
+<label>Color</label>
+
+<input
+type="color"
+name="color"
+value="<%= project ? project.color : '#2563eb' %>">
+
+</div>
+
+<div class="form-group">
+<label>Start Date</label>
+
+<input
+type="date"
+name="start_date"
+value="<%= project ? project.start_date : '' %>">
+
+</div>
+
+<div class="form-group">
+<label>End Date</label>
+
+<input
+type="date"
+name="end_date"
+value="<%= project ? project.end_date : '' %>">
+
+</div>
+
+<div class="form-group full-width">
+
+<label>Description</label>
+
+<textarea
+name="description"
+rows="5"><%= project ? project.description : '' %></textarea>
+
+</div>
+
+</div>
+
+<div class="form-actions">
+
+<button class="btn btn-primary">
+
+<%= project ? "Update Project" : "Save Project" %>
+
+</button>
+
+<a href="/projects" class="btn btn-secondary">
+
+Cancel
+
+</a>
+
+</div>
+
+</form>
