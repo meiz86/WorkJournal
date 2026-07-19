@@ -54,37 +54,23 @@ exports.show = (req, res) => {
       return res.status(404).send("Center not found.");
     }
 
-    CenterStationAssignment.getStationsForCenter(
-      centerId,
+    CenterStationAssignment.getStationsForCenter(centerId, (err, stations) => {
+      if (err) return res.send(err.message);
 
-      (err, stations) => {
+      Hardware.getByCenter(centerId, (err, hardware) => {
         if (err) return res.send(err.message);
 
-        Hardware.getByCenter(
-          centerId,
-
-          (err, hardware) => {
-            if (err) return res.send(err.message);
-
-            res.render(
-              "centers/show",
-
-              {
-                title: center.name,
-
-                center,
-
-                stations,
-
-                hardware,
-              },
-            );
-          },
-        );
-      },
-    );
+        res.render("centers/show", {
+          title: center.name,
+          center,
+          stations,
+          hardware,
+        });
+      });
+    });
   });
 };
+
 // ============================
 // Edit Center
 // ============================
@@ -123,6 +109,11 @@ exports.delete = (req, res) => {
     res.redirect("/centers");
   });
 };
+
+// ============================
+// Assign Station Form
+// ============================
+
 exports.assignStationForm = (req, res) => {
   const centerId = req.params.id;
 
@@ -137,12 +128,15 @@ exports.assignStationForm = (req, res) => {
   });
 };
 
+// ============================
+// Assign Station
+// ============================
+
 exports.assignStation = (req, res) => {
   CenterStationAssignment.assign(
     req.params.id,
-
     req.body.station_id,
-
+    req.body.protocol,
     (err) => {
       if (err) return res.send(err.message);
 

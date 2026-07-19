@@ -1,0 +1,8 @@
+<div class="page-header">
+
+    <h1>Edit Hardware</h1>
+
+</div>
+
+<%- include("_form", { action: "/centers/" + center.id + "/hardware/" + item.id + "/edit" , item: item, center: center,
+    hardwareTypes: hardwareTypes, statuses: statuses }) %>

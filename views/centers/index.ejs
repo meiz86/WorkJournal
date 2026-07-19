@@ -1,13 +1,19 @@
 <div class="page-header">
 
-    <h1>Centers</h1>
+    <div class="page-title">
+        <h1>
+            <i class="fa-solid fa-building"></i>
+            Centers
+        </h1>
+
+        <p>
+            Manage control centers and their assigned stations.
+        </p>
+    </div>
 
     <a href="/centers/new" class="btn btn-primary">
-
         <i class="fa-solid fa-plus"></i>
-
         New Center
-
     </a>
 
 </div>
@@ -19,78 +25,81 @@
         <thead>
 
             <tr>
-
                 <th>Center</th>
-
                 <th>Acronym</th>
-
-                <th>Stations</th>
-
-                <th>Hardware</th>
-
-                <th>Actions</th>
-
+                <th>Status</th>
+                <th style="width:160px;">Actions</th>
             </tr>
 
         </thead>
 
         <tbody>
 
-            <% if(centers.length===0){ %>
+            <% if (centers.length===0) { %>
 
                 <tr>
-
-                    <td colspan="5">
-
+                    <td colspan="4" style="text-align:center;padding:30px;">
+                        <i class="fa-solid fa-building-circle-xmark fa-2x"></i>
+                        <br><br>
                         No centers found.
-
                     </td>
-
                 </tr>
 
                 <% } %>
 
-                    <% centers.forEach(center=>{ %>
+                    <% centers.forEach(center=> { %>
 
                         <tr>
 
                             <td>
 
                                 <a href="/centers/<%= center.id %>">
-
-                                    <%= center.name %>
-
+                                    <strong>
+                                        <%= center.name %>
+                                    </strong>
                                 </a>
 
                             </td>
 
                             <td>
-
                                 <%= center.acronym %>
+                            </td>
+
+                            <td>
+
+                                <% if (center.is_active) { %>
+
+                                    <span class="badge badge-success">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                        Active
+                                    </span>
+
+                                    <% } else { %>
+
+                                        <span class="badge badge-danger">
+                                            <i class="fa-solid fa-circle-xmark"></i>
+                                            Inactive
+                                        </span>
+
+                                        <% } %>
 
                             </td>
 
                             <td>
 
-                                <%= center.station_count %>
+                                <a href="/centers/<%= center.id %>" class="btn btn-info btn-sm" title="View">
 
-                            </td>
+                                    <i class="fa-solid fa-eye"></i>
 
-                            <td>
+                                </a>
 
-                                <%= center.hardware_count %>
-
-                            </td>
-
-                            <td>
-
-                                <a href="/centers/edit/<%= center.id %>" class="btn btn-primary btn-sm">
+                                <a href="/centers/<%= center.id %>/edit" class="btn btn-primary btn-sm" title="Edit">
 
                                     <i class="fa-solid fa-pen"></i>
 
                                 </a>
 
-                                <a href="/centers/delete/<%= center.id %>" class="btn btn-danger btn-sm"
+                                <a href="/centers/<%= center.id %>/delete" class="btn btn-danger btn-sm" title="Delete"
                                     onclick="return confirm('Delete this center?')">
 
                                     <i class="fa-solid fa-trash"></i>

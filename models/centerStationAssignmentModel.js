@@ -1,141 +1,90 @@
 const db = require("../database/db");
 
-
 // ============================
 // Assign Station To Center
 // ============================
 
-exports.assign = (centerId, stationId, callback)=>{
-
-
-    const sql = `
-
+exports.assign = (centerId, stationId, protocol, callback) => {
+  const sql = `
         INSERT INTO center_station_assignments
         (
             center_id,
-            station_id
+            station_id,
+            protocol
         )
 
-        VALUES (?,?)
-
+        VALUES (?,?,?)
     `;
 
-
-    db.run(
-        sql,
-        [
-            centerId,
-            stationId
-        ],
-        callback
-    );
-
+  db.run(sql, [centerId, stationId, protocol], callback);
 };
-
-
 
 // ============================
 // Remove Assignment
 // ============================
 
-exports.remove = (centerId, stationId, callback)=>{
-
-
-    const sql = `
-
+exports.remove = (centerId, stationId, callback) => {
+  const sql = `
         DELETE FROM center_station_assignments
 
-        WHERE center_id=?
+        WHERE center_id = ?
 
-        AND station_id=?
-
+        AND station_id = ?
     `;
 
-
-    db.run(
-        sql,
-        [
-            centerId,
-            stationId
-        ],
-        callback
-    );
-
+  db.run(sql, [centerId, stationId], callback);
 };
-
-
 
 // ============================
 // Stations Of Center
 // ============================
 
-exports.getStationsForCenter = (centerId, callback)=>{
-
-
-    const sql = `
-
+exports.getStationsForCenter = (centerId, callback) => {
+  const sql = `
         SELECT
 
             s.id,
             s.name,
-            s.protocol,
-            s.notes
+            s.notes,
 
+            csa.protocol
 
         FROM center_station_assignments csa
 
-
         INNER JOIN stations s
+            ON s.id = csa.station_id
 
-        ON s.id=csa.station_id
-
-
-        WHERE csa.center_id=?
-
+        WHERE csa.center_id = ?
 
         ORDER BY s.name
-
     `;
 
-
-    db.all(sql,[centerId],callback);
-
+  db.all(sql, [centerId], callback);
 };
-
-
 
 // ============================
 // Centers Of Station
 // ============================
 
-exports.getCentersForStation = (stationId, callback)=>{
-
-
-    const sql = `
-
+exports.getCentersForStation = (stationId, callback) => {
+  const sql = `
         SELECT
 
             c.id,
             c.name,
-            c.acronym
+            c.acronym,
 
+            csa.protocol
 
         FROM center_station_assignments csa
 
-
         INNER JOIN centers c
+            ON c.id = csa.center_id
 
-        ON c.id=csa.center_id
-
-
-        WHERE csa.station_id=?
-
+        WHERE csa.station_id = ?
 
         ORDER BY c.name
-
     `;
 
-
-    db.all(sql,[stationId],callback);
-
+  db.all(sql, [stationId], callback);
 };

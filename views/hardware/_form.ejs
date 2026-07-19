@@ -1,138 +1,111 @@
 <div class="form-card">
 
-<form action="<%= action %>" method="POST">
+    <form action="<%= action %>" method="POST">
 
-<div class="form-group">
+        <div class="form-group">
 
-<label>Type</label>
+            <label>Type</label>
 
-<select name="type" required>
+            <select name="type" required>
 
-<% hardwareTypes.forEach(type=>{ %>
+                <% hardwareTypes.forEach(type=>{ %>
 
-<option
-value="<%= type %>"
+                    <option value="<%= type %>" <%=item && item.type===type ? "selected" :"" %>>
 
-<%= item && item.type===type ? "selected":"" %>>
+                        <%= type %>
 
-<%= type %>
+                    </option>
 
-</option>
+                    <% }) %>
 
-<% }) %>
+            </select>
 
-</select>
+        </div>
 
-</div>
+        <div class="form-group">
 
-<div class="form-group">
+            <label>Brand</label>
 
-<label>Brand</label>
+            <input type="text" name="brand" value="<%= item ? item.brand : '' %>">
 
-<input
-type="text"
-name="brand"
-value="<%= item ? item.brand : '' %>">
+        </div>
 
-</div>
+        <div class="form-group">
 
-<div class="form-group">
+            <label>Model</label>
 
-<label>Model</label>
+            <input type="text" name="model" value="<%= item ? item.model : '' %>">
 
-<input
-type="text"
-name="model"
-value="<%= item ? item.model : '' %>">
+        </div>
 
-</div>
+        <div class="form-group">
 
-<div class="form-group">
+            <label>Quantity</label>
 
-<label>Quantity</label>
+            <input type="number" min="1" name="quantity" value="<%= item ? item.quantity : 1 %>">
 
-<input
-type="number"
-min="1"
-name="quantity"
-value="<%= item ? item.quantity : 1 %>">
+        </div>
 
-</div>
+        <div class="form-group">
 
-<div class="form-group">
+            <label>Serial Number</label>
 
-<label>Serial Number</label>
+            <input type="text" name="serial_number" value="<%= item ? item.serial_number : '' %>">
 
-<input
-type="text"
-name="serial_number"
-value="<%= item ? item.serial_number : '' %>">
+        </div>
 
-</div>
+        <div class="form-group">
 
-<div class="form-group">
+            <label>IP Address</label>
 
-<label>IP Address</label>
+            <input type="text" name="ip_address" value="<%= item ? item.ip_address : '' %>">
 
-<input
-type="text"
-name="ip_address"
-value="<%= item ? item.ip_address : '' %>">
+        </div>
 
-</div>
+        <div class="form-group">
 
-<div class="form-group">
+            <label>Status</label>
 
-<label>Status</label>
+            <select name="status">
 
-<select name="status">
+                <% statuses.forEach(status=>{ %>
 
-<% statuses.forEach(status=>{ %>
+                    <option value="<%= status %>" <%=item && item.status===status ? "selected" :"" %>>
 
-<option
-value="<%= status %>"
+                        <%= status %>
 
-<%= item && item.status===status ? "selected":"" %>>
+                    </option>
 
-<%= status %>
+                    <% }) %>
 
-</option>
+            </select>
 
-<% }) %>
+        </div>
 
-</select>
+        <div class="form-group">
 
-</div>
+            <label>Notes</label>
 
-<div class="form-group">
+            <textarea name="notes" rows="5"><%= item ? item.notes : '' %></textarea>
 
-<label>Notes</label>
+        </div>
 
-<textarea
-name="notes"
-rows="5"><%= item ? item.notes : '' %></textarea>
+        <div class="form-actions">
 
-</div>
+            <button class="btn btn-primary">
 
-<div class="form-actions">
+                Save
 
-<button
-class="btn btn-primary">
+            </button>
 
-Save
+            <a href="/centers/<%= center.id %>/hardware" class="btn btn-secondary">
 
-</button>
+                Cancel
 
-<a
-href="/centers/<%= center.id %>/hardware"
-class="btn btn-secondary">
+            </a>
 
-Cancel
+        </div>
 
-</a>
-
-</div>
-
-</form>
+    </form>
 
 </div>

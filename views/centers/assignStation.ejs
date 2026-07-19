@@ -1,35 +1,69 @@
-<h1>
-Assign Station
-</h1>
+<div class="page-header">
 
+    <h1>Assign Station</h1>
 
-<form method="POST">
+</div>
 
+<div class="form-card">
 
-<select name="station_id">
+    <form method="POST">
 
+        <div class="form-group">
 
-<% stations.forEach(station=>{ %>
+            <label>Station</label>
 
-<option value="<%= station.id %>">
+            <select name="station_id" required>
 
-<%= station.name %>
+                <% stations.forEach(station=> { %>
 
-</option>
+                    <option value="<%= station.id %>">
 
+                        <%= station.name %>
 
-<% }) %>
+                    </option>
 
+                    <% }) %>
 
-</select>
+            </select>
 
+        </div>
 
-<br><br>
+        <div class="form-group">
 
+            <label>Connection Protocol</label>
 
-<button type="submit">
-Assign
-</button>
+            <select name="protocol" required>
 
+                <option value="IEC101">IEC101</option>
 
-</form>
+                <option value="IEC104">IEC104</option>
+
+                <option value="Modbus">Modbus</option>
+
+                <option value="DNP3">DNP3</option>
+
+                <option value="TASE II">TASE II</option>
+
+            </select>
+
+        </div>
+
+        <div class="form-actions">
+
+            <button class="btn btn-primary" type="submit">
+
+                Assign Station
+
+            </button>
+
+            <a href="/centers/<%= centerId %>" class="btn btn-secondary">
+
+                Cancel
+
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
