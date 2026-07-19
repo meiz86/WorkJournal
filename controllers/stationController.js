@@ -1,18 +1,62 @@
 const Station = require("../models/stationModel");
-const Center = require("../models/centerModel");
+const CenterStationAssignment = require("../models/centerStationAssignmentModel");
 
 // ============================
 // List Stations
 // ============================
 
 exports.index = (req, res) => {
+  const search = req.query.search || "";
+
+  if (search) {
+    Station.search(search, (err, stations) => {
+      if (err) return res.send(err.message);
+
+      res.render("stations/index", {
+        title: "Stations",
+        stations,
+        search,
+      });
+    });
+
+    return;
+  }
+
   Station.getAll((err, stations) => {
     if (err) return res.send(err.message);
 
     res.render("stations/index", {
       title: "Stations",
       stations,
+      search: "",
     });
+  });
+};
+
+// ============================
+// Station Details
+// ============================
+
+exports.show = (req, res) => {
+  Station.getById(req.params.id, (err, station) => {
+    if (err) return res.send(err.message);
+
+    if (!station) {
+      return res.status(404).send("Station not found.");
+    }
+
+    CenterStationAssignment.getCentersForStation(
+      req.params.id,
+      (err, centers) => {
+        if (err) return res.send(err.message);
+
+        res.render("stations/show", {
+          title: station.name,
+          station,
+          centers,
+        });
+      },
+    );
   });
 };
 
@@ -21,13 +65,8 @@ exports.index = (req, res) => {
 // ============================
 
 exports.newForm = (req, res) => {
-  Center.getAll((err, centers) => {
-    if (err) return res.send(err.message);
-
-    res.render("stations/new", {
-      title: "New Station",
-      centers,
-    });
+  res.render("stations/new", {
+    title: "New Station",
   });
 };
 
@@ -48,21 +87,16 @@ exports.create = (req, res) => {
 // ============================
 
 exports.editForm = (req, res) => {
-  Center.getAll((err, centers) => {
+  Station.getById(req.params.id, (err, station) => {
     if (err) return res.send(err.message);
 
-    Station.getById(req.params.id, (err, station) => {
-      if (err) return res.send(err.message);
+    if (!station) {
+      return res.status(404).send("Station not found.");
+    }
 
-      if (!station) {
-        return res.status(404).send("Station not found.");
-      }
-
-      res.render("stations/edit", {
-        title: "Edit Station",
-        station,
-        centers,
-      });
+    res.render("stations/edit", {
+      title: "Edit Station",
+      station,
     });
   });
 };
@@ -75,7 +109,7 @@ exports.update = (req, res) => {
   Station.update(req.params.id, req.body, (err) => {
     if (err) return res.send(err.message);
 
-    res.redirect("/stations");
+    res.redirect(`/stations/${req.params.id}`);
   });
 };
 

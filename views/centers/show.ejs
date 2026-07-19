@@ -1,18 +1,52 @@
-MRDC
-──────────────────────────────
+<h1>
+    <%= center.name %>
+</h1>
 
-Hardware
-----------------------------
-Servers : 2
-Switches : 6
-PCs : 14
-NPorts : 5
-GPS : 2
+<p>
+Acronym:
+<%= center.acronym || "-" %>
+</p>
 
+<hr>
+
+<h3>
 Stations
-----------------------------
-✓ Station 1
-✓ Station 2
-✓ Station 3
+</h3>
 
-[Add Station]
+
+<% if(stations.length === 0){ %>
+
+<p>
+No stations assigned.
+</p>
+
+
+<% } else { %>
+
+
+<ul>
+
+<% stations.forEach(station=>{ %>
+
+<li>
+
+<strong>
+<%= station.name %>
+</strong>
+
+<br>
+
+Protocol:
+
+<%= station.protocol || "-" %>
+
+
+</li>
+
+
+<% }) %>
+
+</ul>
+
+
+<% } %>

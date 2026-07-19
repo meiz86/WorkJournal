@@ -1,119 +1,140 @@
 const db = require("../database/db");
 
-// ============================
-// Get all stations
-// ============================
-
-function getAll(callback) {
-  const sql = `
-    SELECT
-      s.*,
-      c.name AS center
-    FROM stations s
-    LEFT JOIN centers c
-      ON c.id = s.center_id
-    ORDER BY c.name, s.name
-  `;
-
-  db.all(sql, [], callback);
-}
 
 // ============================
-// Get stations by center
+// Get All Stations
 // ============================
 
-function getByCenter(centerId, callback) {
-  const sql = `
-    SELECT *
-    FROM stations
-    WHERE center_id = ?
-    ORDER BY name
-  `;
+exports.getAll = (callback)=>{
 
-  db.all(sql, [centerId], callback);
-}
+    const sql = `
+        SELECT
+            id,
+            name,
+            protocol,
+            notes
 
-// ============================
-// Get station by id
-// ============================
+        FROM stations
 
-function getById(id, callback) {
-  db.get(
-    `
-    SELECT *
-    FROM stations
-    WHERE id = ?
-    `,
-    [id],
-    callback,
-  );
-}
+        ORDER BY name
+    `;
+
+    db.all(sql, callback);
+
+};
+
+
 
 // ============================
-// Create station
+// Get Station By ID
 // ============================
 
-function create(station, callback) {
-  const sql = `
-    INSERT INTO stations
-    (
-      center_id,
-      name,
-      protocol,
-      notes
-    )
-    VALUES (?, ?, ?, ?)
-  `;
+exports.getById = (id, callback)=>{
 
-  db.run(
-    sql,
-    [station.center_id, station.name, station.protocol, station.notes],
-    callback,
-  );
-}
+    const sql = `
+        SELECT
+            id,
+            name,
+            protocol,
+            notes
 
-// ============================
-// Update station
-// ============================
+        FROM stations
 
-function update(id, station, callback) {
-  const sql = `
-    UPDATE stations
-    SET
-      center_id = ?,
-      name = ?,
-      protocol = ?,
-      notes = ?
-    WHERE id = ?
-  `;
+        WHERE id = ?
+    `;
 
-  db.run(
-    sql,
-    [station.center_id, station.name, station.protocol, station.notes, id],
-    callback,
-  );
-}
+    db.get(sql,[id],callback);
+
+};
+
+
 
 // ============================
-// Delete station
+// Create Station
 // ============================
 
-function remove(id, callback) {
-  db.run(
-    `
-    DELETE FROM stations
-    WHERE id = ?
-    `,
-    [id],
-    callback,
-  );
-}
+exports.create = (data,callback)=>{
 
-module.exports = {
-  getAll,
-  getByCenter,
-  getById,
-  create,
-  update,
-  remove,
+    const sql = `
+
+        INSERT INTO stations
+        (
+            name,
+            protocol,
+            notes
+        )
+
+        VALUES (?,?,?)
+
+    `;
+
+
+    db.run(
+        sql,
+        [
+            data.name,
+            data.protocol,
+            data.notes
+        ],
+        callback
+    );
+
+};
+
+
+
+// ============================
+// Update Station
+// ============================
+
+exports.update = (id,data,callback)=>{
+
+
+    const sql = `
+
+        UPDATE stations
+
+        SET
+
+            name=?,
+            protocol=?,
+            notes=?
+
+        WHERE id=?
+
+    `;
+
+
+    db.run(
+        sql,
+        [
+            data.name,
+            data.protocol,
+            data.notes,
+            id
+        ],
+        callback
+    );
+
+};
+
+
+
+// ============================
+// Delete Station
+// ============================
+
+exports.remove = (id,callback)=>{
+
+    const sql = `
+
+        DELETE FROM stations
+
+        WHERE id=?
+
+    `;
+
+
+    db.run(sql,[id],callback);
+
 };

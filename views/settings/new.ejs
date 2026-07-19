@@ -1,0 +1,31 @@
+<h1>Add Setting</h1>
+
+<form method="POST" action="/settings/<%= category %>/new">
+  <input type="hidden" name="category" value="<%= category %>" />
+
+  <label> Value </label>
+
+  <br />
+
+  <input type="text" name="value" required />
+
+  <br /><br />
+
+  <label> Description </label>
+
+  <br />
+
+  <textarea name="description"></textarea>
+
+  <br /><br />
+
+  <label> Color </label>
+
+  <br />
+
+  <input type="text" name="color" value="#6c757d" />
+
+  <br /><br />
+
+  <button type="submit">Save</button>
+</form>

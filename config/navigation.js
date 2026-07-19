@@ -4,15 +4,14 @@ const navigation = [
     icon: "fa-solid fa-house",
     url: "/",
   },
+
+  // ==========================
+  // Work Management
+  // ==========================
   {
     title: "Projects",
     icon: "fa-solid fa-folder-open",
     url: "/projects",
-  },
-  {
-    title: "Departments",
-    icon: "fa-solid fa-building",
-    url: "/departments",
   },
   {
     title: "Activities",
@@ -24,25 +23,43 @@ const navigation = [
     icon: "fa-solid fa-list-check",
     url: "/tasks",
   },
-  {
-    title: "Reports",
-    icon: "fa-solid fa-chart-line",
-    url: "/reports",
-  },
-  {
-    title: "Calendar",
-    icon: "fa-solid fa-calendar",
-    url: "/calendar",
-  },
+
+  // ==========================
+  // Network Management
+  // ==========================
   {
     title: "Centers",
     icon: "fa-solid fa-tower-broadcast",
     url: "/centers",
   },
   {
+    title: "Settings",
+    icon: "fa-solid fa-gears",
+    url: "/settings",
+  },
+  {
     title: "Stations",
     icon: "fa-solid fa-tower-cell",
     url: "/stations",
+  },
+  {
+    title: "Departments",
+    icon: "fa-solid fa-building",
+    url: "/departments",
+  },
+
+  // ==========================
+  // Reports
+  // ==========================
+  {
+    title: "Calendar",
+    icon: "fa-solid fa-calendar",
+    url: "/calendar",
+  },
+  {
+    title: "Reports",
+    icon: "fa-solid fa-chart-line",
+    url: "/reports",
   },
 ];
 

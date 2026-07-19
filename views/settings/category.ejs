@@ -1,0 +1,70 @@
+<h1>
+    <%= category %>
+</h1>
+
+<a href="/settings/<%= category %>/new">
+    + Add New
+</a>
+
+<hr>
+
+<table border="1" cellpadding="8">
+
+<tr>
+    <th>ID</th>
+    <th>Value</th>
+    <th>Description</th>
+    <th>Color</th>
+    <th>Actions</th>
+</tr>
+
+
+<% items.forEach(item => { %>
+
+<tr>
+
+<td>
+    <%= item.id %>
+</td>
+
+<td>
+    <%= item.value %>
+</td>
+
+<td>
+    <%= item.description || "" %>
+</td>
+
+<td>
+
+<span style="
+background:<%= item.color %>;
+padding:5px;
+color:white;
+">
+
+<%= item.color %>
+
+</span>
+
+</td>
+
+
+<td>
+
+<a href="/settings/<%= category %>/delete/<%= item.id %>"
+onclick="return confirm('Delete this item?')">
+
+Delete
+
+</a>
+
+</td>
+
+
+</tr>
+
+<% }) %>
+
+
+</table>

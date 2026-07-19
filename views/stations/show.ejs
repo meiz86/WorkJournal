@@ -1,0 +1,49 @@
+<div class="page-header">
+    <div class="page-title">
+        <h1><i class="fa-solid fa-tower-cell"></i><%= station.name %></h1>
+        <p>Station Details</p>
+    </div>
+    <a href="/centers/<%= station.id %>/assign-station">+ Assign Station</a>
+    <a href="/stations/<%= station.id %>/edit" class="btn btn-primary">Edit</a>
+</div>
+<div class="stats-grid">
+    <div class="card">
+        <h3>Protocol</h3>
+        <h2><%= station.protocol || "-" %></h2>
+    </div>
+    <div class="card">
+        <h3>Centers Using This Station</h3>
+        <h2><%= centers.length %></h2>
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-header">
+        <h2>Notes</h2>
+    </div>
+    <p><%= station.notes || "No notes." %></p>
+</div>
+<div class="panel">
+    <div class="panel-header">
+        <h2>Centers</h2>
+    </div>    
+    <table class="dashboard-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Acronym</th>
+            </tr>
+        </thead>
+        <tbody><% if(centers.length===0){ %>
+            <tr>
+                <td colspan="2">This station is not assigned to any center.</td>
+            </tr>
+            <% } %>
+            <% centers.forEach(center=>{ %>
+                <tr>
+                    <td><a href="/centers/<%= center.id %>"><%= center.name %></a></td>
+                    <td><%= center.acronym %></td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>

@@ -14,6 +14,9 @@ router.get("/", controller.index);
 router.get("/new", controller.newForm);
 router.post("/new", controller.create);
 
+// Details
+router.get("/:id", controller.show);
+
 // Edit
 router.get("/:id/edit", controller.editForm);
 router.post("/:id/edit", controller.update);

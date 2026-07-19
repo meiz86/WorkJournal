@@ -1,0 +1,35 @@
+<h1>
+Assign Station
+</h1>
+
+
+<form method="POST">
+
+
+<select name="station_id">
+
+
+<% stations.forEach(station=>{ %>
+
+<option value="<%= station.id %>">
+
+<%= station.name %>
+
+</option>
+
+
+<% }) %>
+
+
+</select>
+
+
+<br><br>
+
+
+<button type="submit">
+Assign
+</button>
+
+
+</form>

@@ -1,114 +1,90 @@
 const db = require("../database/db");
 
 // ============================
-// Get all centers
+// List All Centers
 // ============================
 
-function getAll(callback) {
+exports.getAll = (callback) => {
   const sql = `
-    SELECT
-      c.*,
+        SELECT
+            id,
+            name,
+            acronym
 
-      (
-        SELECT COUNT(*)
-        FROM stations s
-        WHERE s.center_id = c.id
-      ) AS station_count
+        FROM centers
 
-    FROM centers c
+        ORDER BY name
+    `;
 
-    WHERE c.is_active = 1
-
-    ORDER BY c.name
-  `;
-
-  db.all(sql, [], callback);
-}
+  db.all(sql, callback);
+};
 
 // ============================
-// Get center by ID
+// Get Center By ID
 // ============================
 
-function getById(id, callback) {
-  db.get(
-    `
-    SELECT *
-    FROM centers
-    WHERE id = ?
-    `,
-    [id],
-    callback
-  );
-}
+exports.getById = (id, callback) => {
+  const sql = `
+        SELECT
+            id,
+            name,
+            acronym
+
+        FROM centers
+
+        WHERE id = ?
+    `;
+
+  db.get(sql, [id], callback);
+};
 
 // ============================
-// Create center
+// Create Center
 // ============================
 
-function create(center, callback) {
-  db.run(
-    `
-    INSERT INTO centers
-    (
-      name,
-      acronym,
-      details
-    )
-    VALUES (?, ?, ?)
-    `,
-    [
-      center.name,
-      center.acronym,
-      center.details,
-    ],
-    callback
-  );
-}
+exports.create = (data, callback) => {
+  const sql = `
+        INSERT INTO centers
+        (
+            name,
+            acronym
+        )
+
+        VALUES (?, ?)
+    `;
+
+  db.run(sql, [data.name, data.acronym], callback);
+};
 
 // ============================
-// Update center
+// Update Center
 // ============================
 
-function update(id, center, callback) {
-  db.run(
-    `
-    UPDATE centers
-    SET
-      name = ?,
-      acronym = ?,
-      details = ?
-    WHERE id = ?
-    `,
-    [
-      center.name,
-      center.acronym,
-      center.details,
-      id,
-    ],
-    callback
-  );
-}
+exports.update = (id, data, callback) => {
+  const sql = `
+        UPDATE centers
+
+        SET
+
+            name = ?,
+            acronym = ?
+
+        WHERE id = ?
+    `;
+
+  db.run(sql, [data.name, data.acronym, id], callback);
+};
 
 // ============================
-// Soft Delete
+// Delete Center
 // ============================
 
-function remove(id, callback) {
-  db.run(
-    `
-    UPDATE centers
-    SET is_active = 0
-    WHERE id = ?
-    `,
-    [id],
-    callback
-  );
-}
+exports.remove = (id, callback) => {
+  const sql = `
+        DELETE FROM centers
 
-module.exports = {
-  getAll,
-  getById,
-  create,
-  update,
-  remove,
+        WHERE id = ?
+    `;
+
+  db.run(sql, [id], callback);
 };
