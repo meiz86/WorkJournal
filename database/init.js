@@ -118,40 +118,69 @@ CREATE TABLE IF NOT EXISTS centers (
   // ===========================
   // Stations
   // ===========================
+
+  db.run(`
+CREATE TABLE IF NOT EXISTS stations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    name TEXT NOT NULL UNIQUE,
+
+    protocol TEXT,
+
+    notes TEXT,
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+`);
   // ===========================
-  // Stations
+  // Center Station Assignments
   // ===========================
 
   db.run(`
-  CREATE TABLE IF NOT EXISTS stations (
+CREATE TABLE IF NOT EXISTS center_station_assignments (
+
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+
     center_id INTEGER NOT NULL,
-    name TEXT NOT NULL,
-    protocol TEXT,
-    notes TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    station_id INTEGER NOT NULL,
 
     FOREIGN KEY(center_id)
-      REFERENCES centers(id)
-      ON DELETE CASCADE
-  );
+    REFERENCES centers(id)
+    ON DELETE CASCADE,
+
+    FOREIGN KEY(station_id)
+    REFERENCES stations(id)
+    ON DELETE CASCADE,
+
+    UNIQUE(center_id,station_id)
+
+);
 `);
   // ===========================
   // Hardware
   // ===========================
+
   db.run(`
 CREATE TABLE IF NOT EXISTS hardware (
+
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 
     center_id INTEGER NOT NULL,
 
     type TEXT NOT NULL,
-    name TEXT NOT NULL,
 
     brand TEXT,
+
     model TEXT,
+
+    quantity INTEGER DEFAULT 1,
+
     serial_number TEXT,
+
     ip_address TEXT,
+
+    status TEXT DEFAULT 'Operational',
 
     notes TEXT,
 
@@ -160,6 +189,7 @@ CREATE TABLE IF NOT EXISTS hardware (
     FOREIGN KEY(center_id)
         REFERENCES centers(id)
         ON DELETE CASCADE
+
 );
 `);
 });
