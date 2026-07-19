@@ -45,24 +45,42 @@ exports.create = (req, res) => {
 // ============================
 
 exports.show = (req, res) => {
-  const id = req.params.id;
+  const centerId = req.params.id;
 
-  Center.getById(id, (err, center) => {
+  Center.getById(centerId, (err, center) => {
     if (err) return res.send(err.message);
 
-    if (!center) return res.status(404).send("Center not found.");
+    if (!center) {
+      return res.status(404).send("Center not found.");
+    }
 
     CenterStationAssignment.getStationsForCenter(
-      id,
+      centerId,
 
       (err, stations) => {
         if (err) return res.send(err.message);
 
-        res.render("centers/show", {
-          title: center.name,
-          center,
-          stations,
-        });
+        Hardware.getByCenter(
+          centerId,
+
+          (err, hardware) => {
+            if (err) return res.send(err.message);
+
+            res.render(
+              "centers/show",
+
+              {
+                title: center.name,
+
+                center,
+
+                stations,
+
+                hardware,
+              },
+            );
+          },
+        );
       },
     );
   });

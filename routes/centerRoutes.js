@@ -21,7 +21,6 @@ router.post("/:id/edit", controller.update);
 router.get("/:id/delete", controller.delete);
 
 // Assign Station
-router.get("/:id/stations", controller.stationForm);
+router.get("/:id/stations", controller.assignStationForm);
 router.post("/:id/stations", controller.assignStation);
-
 module.exports = router;

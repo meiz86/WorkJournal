@@ -2,51 +2,144 @@
     <%= center.name %>
 </h1>
 
+<hr>
+
+<!-- =========================
+     Center Information
+========================= -->
+
+<h2>Information</h2>
+
 <p>
-Acronym:
-<%= center.acronym || "-" %>
+    <strong>Acronym:</strong>
+    <%= center.acronym %>
 </p>
+
+<p>
+    <strong>Details:</strong>
+    <%= center.details || "No details" %>
+</p>
+
+<p>
+    <strong>Status:</strong>
+
+    <% if (center.is_active) { %>
+        Active
+    <% } else { %>
+        Inactive
+    <% } %>
+
+</p>
+
 
 <hr>
 
-<h3>
-Stations
-</h3>
+
+<!-- =========================
+     Stations
+========================= -->
+
+<h2>Stations</h2>
+
+<a href="/centers/<%= center.id %>/stations">
+    + Assign Station
+</a>
 
 
-<% if(stations.length === 0){ %>
+<% if (stations.length === 0) { %>
 
-<p>
-No stations assigned.
-</p>
+    <p>
+        No stations assigned.
+    </p>
+
+<% } else { %>
+
+<ul>
+
+<% stations.forEach(station => { %>
+
+    <li>
+
+        <a href="/stations/<%= station.id %>">
+            <%= station.name %>
+        </a>
+
+        <% if (station.protocol) { %>
+            - <%= station.protocol %>
+        <% } %>
+
+    </li>
+
+<% }) %>
+
+</ul>
+
+<% } %>
+
+
+
+<hr>
+
+
+<!-- =========================
+     Hardware
+========================= -->
+
+<h2>Hardware</h2>
+
+
+<a href="/hardware/new?center_id=<%= center.id %>">
+    + Add Hardware
+</a>
+
+
+<% if (hardware.length === 0) { %>
+
+    <p>
+        No hardware registered.
+    </p>
 
 
 <% } else { %>
 
 
-<ul>
+<table border="1">
 
-<% stations.forEach(station=>{ %>
-
-<li>
-
-<strong>
-<%= station.name %>
-</strong>
-
-<br>
-
-Protocol:
-
-<%= station.protocol || "-" %>
+<tr>
+    <th>Type</th>
+    <th>Brand</th>
+    <th>Quantity</th>
+    <th>Status</th>
+</tr>
 
 
-</li>
+<% hardware.forEach(item => { %>
+
+<tr>
+
+<td>
+    <%= item.type %>
+</td>
+
+<td>
+    <%= item.brand || "-" %>
+</td>
+
+<td>
+    <%= item.quantity %>
+</td>
+
+<td>
+    <%= item.status %>
+</td>
+
+</tr>
 
 
 <% }) %>
 
-</ul>
+
+</table>
 
 
 <% } %>

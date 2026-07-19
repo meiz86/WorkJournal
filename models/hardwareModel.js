@@ -1,41 +1,62 @@
 const db = require("../database/db");
 
-// ===================================
-// Get hardware by center
-// ===================================
 
-function getByCenter(centerId, callback) {
-  const sql = `
-        SELECT *
+// ============================
+// Hardware by Center
+// ============================
+
+exports.getByCenter = (centerId, callback) => {
+
+    const sql = `
+        SELECT
+            id,
+            center_id,
+            type,
+            brand,
+            model,
+            quantity,
+            serial_number,
+            ip_address,
+            status,
+            notes,
+            created_at
+
         FROM hardware
-        WHERE center_id=?
-        ORDER BY type,brand,model
+
+        WHERE center_id = ?
+
+        ORDER BY type, brand
     `;
 
-  db.all(sql, [centerId], callback);
-}
+    db.all(sql, [centerId], callback);
 
-// ===================================
-// Get one hardware
-// ===================================
+};
 
-function getById(id, callback) {
-  db.get(
-    "SELECT * FROM hardware WHERE id=?",
 
-    [id],
+// ============================
+// Get One Hardware
+// ============================
 
-    callback,
-  );
-}
+exports.getById = (id, callback) => {
 
-// ===================================
+    const sql = `
+        SELECT *
+        FROM hardware
+        WHERE id = ?
+    `;
+
+    db.get(sql, [id], callback);
+
+};
+
+
+// ============================
 // Create
-// ===================================
+// ============================
 
-function create(data, callback) {
-  const sql = `
+exports.create = (data, callback) => {
 
+    const sql = `
         INSERT INTO hardware
         (
             center_id,
@@ -49,113 +70,85 @@ function create(data, callback) {
             notes
         )
 
-        VALUES(?,?,?,?,?,?,?,?,?)
-
+        VALUES (?,?,?,?,?,?,?,?,?)
     `;
 
-  db.run(
-    sql,
-    [
-      data.center_id,
 
-      data.type,
+    db.run(
+        sql,
+        [
+            data.center_id,
+            data.type,
+            data.brand,
+            data.model,
+            data.quantity,
+            data.serial_number,
+            data.ip_address,
+            data.status,
+            data.notes
+        ],
+        callback
+    );
 
-      data.brand,
+};
 
-      data.model,
 
-      data.quantity,
-
-      data.serial_number,
-
-      data.ip_address,
-
-      data.status,
-
-      data.notes,
-    ],
-    callback,
-  );
-}
-
-// ===================================
+// ============================
 // Update
-// ===================================
+// ============================
 
-function update(id, data, callback) {
-  const sql = `
+exports.update = (id, data, callback) => {
 
+    const sql = `
         UPDATE hardware
 
         SET
 
-            type=?,
+            type = ?,
+            brand = ?,
+            model = ?,
+            quantity = ?,
+            serial_number = ?,
+            ip_address = ?,
+            status = ?,
+            notes = ?
 
-            brand=?,
-
-            model=?,
-
-            quantity=?,
-
-            serial_number=?,
-
-            ip_address=?,
-
-            status=?,
-
-            notes=?
-
-        WHERE id=?
-
+        WHERE id = ?
     `;
 
-  db.run(
-    sql,
-    [
-      data.type,
 
-      data.brand,
+    db.run(
+        sql,
+        [
+            data.type,
+            data.brand,
+            data.model,
+            data.quantity,
+            data.serial_number,
+            data.ip_address,
+            data.status,
+            data.notes,
+            id
+        ],
+        callback
+    );
 
-      data.model,
+};
 
-      data.quantity,
 
-      data.serial_number,
-
-      data.ip_address,
-
-      data.status,
-
-      data.notes,
-
-      id,
-    ],
-    callback,
-  );
-}
-
-// ===================================
+// ============================
 // Delete
-// ===================================
+// ============================
 
-function remove(id, callback) {
-  db.run(
-    "DELETE FROM hardware WHERE id=?",
+exports.remove = (id, callback) => {
 
-    [id],
+    db.run(
+        `
+        DELETE FROM hardware
+        WHERE id = ?
+        `,
+        [id],
+        callback
+    );
 
-    callback,
-  );
-}
-
-module.exports = {
-  getByCenter,
-
-  getById,
-
-  create,
-
-  update,
-
-  remove,
 };
