@@ -1,0 +1,142 @@
+<div class="page-header">
+
+    <div class="page-title">
+
+        <h1>
+
+            <i class="fa-solid fa-tower-cell"></i>
+
+            Stations
+
+        </h1>
+
+        <p>
+
+            Shared station catalog
+
+        </p>
+
+    </div>
+
+    <a href="/stations/new" class="btn btn-primary">
+
+        <i class="fa-solid fa-plus"></i>
+
+        New Station
+
+    </a>
+
+</div>
+
+<form method="GET" action="/stations">
+
+<div class="card">
+
+    <input
+        type="text"
+        name="search"
+        placeholder="Search station..."
+        value="<%= search %>">
+
+    <button class="btn btn-primary">
+
+        Search
+
+    </button>
+
+    <a href="/stations" class="btn btn-secondary">
+
+        Clear
+
+    </a>
+
+</div>
+
+</form>
+
+<br>
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+    <th>Name</th>
+    <th>Protocol</th>
+    <th>Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<% if(stations.length===0){ %>
+
+<tr>
+
+<td colspan="3">
+
+No stations found.
+
+</td>
+
+</tr>
+
+<% } %>
+
+<% stations.forEach(station=>{ %>
+
+<tr>
+
+<td>
+
+<a href="/stations/<%= station.id %>">
+
+<%= station.name %>
+
+</a>
+
+</td>
+
+<td>
+
+<%= station.protocol || "-" %>
+
+</td>
+
+<td>
+
+<a
+class="btn btn-secondary"
+href="/stations/<%= station.id %>/edit">
+
+Edit
+
+</a>
+
+<form
+action="/stations/<%= station.id %>/delete"
+method="POST"
+style="display:inline;">
+
+<button
+class="btn btn-danger"
+onclick="return confirm('Delete station?')">
+
+Delete
+
+</button>
+
+</form>
+
+</td>
+
+</tr>
+
+<% }) %>
+
+</tbody>
+
+</table>
