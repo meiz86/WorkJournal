@@ -1,145 +1,265 @@
-<h1>
-    <%= center.name %>
-</h1>
+<div class="page-header">
 
-<hr>
+    <div class="page-title">
+
+        <h1>
+            <i class="fa-solid fa-building"></i>
+            <%= center.name %>
+        </h1>
+
+        <p>
+            <%= center.acronym %>
+        </p>
+
+    </div>
+
+    <div class="header-actions">
+
+        <a href="/centers" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back
+        </a>
+
+        <a href="/centers/<%= center.id %>/edit" class="btn btn-primary">
+            <i class="fa-solid fa-pen"></i>
+            Edit
+        </a>
+
+    </div>
+
+</div>
+
 
 <!-- =========================
      Center Information
 ========================= -->
 
-<h2>Information</h2>
+<div class="panel">
 
-<p>
-    <strong>Acronym:</strong>
-    <%= center.acronym %>
-</p>
+    <div class="panel-header">
+        <h2>Center Information</h2>
+    </div>
 
-<p>
-    <strong>Details:</strong>
-    <%= center.details || "No details" %>
-</p>
+    <table class="dashboard-table">
 
-<p>
-    <strong>Status:</strong>
+        <tbody>
 
-    <% if (center.is_active) { %>
-        Active
-    <% } else { %>
-        Inactive
-    <% } %>
+            <tr>
+                <th style="width:180px;">Name</th>
+                <td>
+                    <%= center.name %>
+                </td>
+            </tr>
 
-</p>
+            <tr>
+                <th>Acronym</th>
+                <td>
+                    <%= center.acronym %>
+                </td>
+            </tr>
 
+            <tr>
+                <th>Status</th>
 
-<hr>
+                <td>
+
+                    <% if(center.is_active){ %>
+
+                        <span class="badge badge-success">
+                            Active
+                        </span>
+
+                        <% }else{ %>
+
+                            <span class="badge badge-danger">
+                                Inactive
+                            </span>
+
+                            <% } %>
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <th>Details</th>
+
+                <td>
+
+                    <% if(center.details){ %>
+
+                        <%= center.details %>
+
+                            <% }else{ %>
+
+                                <span class="text-muted">No details.</span>
+
+                                <% } %>
+
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
 
 
 <!-- =========================
      Stations
 ========================= -->
 
-<h2>Stations</h2>
+<div class="panel">
 
-<a href="/centers/<%= center.id %>/stations">
-    + Assign Station
-</a>
+    <div class="panel-header">
 
+        <h2>Assigned Stations</h2>
 
-<% if (stations.length === 0) { %>
+        <a href="/centers/<%= center.id %>/stations" class="btn btn-primary btn-sm">
 
-    <p>
-        No stations assigned.
-    </p>
+            <i class="fa-solid fa-plus"></i>
+            Assign Station
 
-<% } else { %>
-
-<ul>
-
-<% stations.forEach(station => { %>
-
-    <li>
-
-        <a href="/stations/<%= station.id %>">
-            <%= station.name %>
         </a>
 
-        <% if (station.protocol) { %>
-            - <%= station.protocol %>
-        <% } %>
+    </div>
 
-    </li>
+    <% if(stations.length===0){ %>
 
-<% }) %>
+        <div style="padding:25px;text-align:center;">
 
-</ul>
+            No stations assigned.
 
-<% } %>
+        </div>
 
+        <% }else{ %>
 
+            <table class="dashboard-table">
 
-<hr>
+                <thead>
+
+                    <tr>
+                        <th>Name</th>
+                        <th>Protocol</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <% stations.forEach(station=>{ %>
+
+                        <tr>
+
+                            <td>
+
+                                <a href="/stations/<%= station.id %>">
+
+                                    <%= station.name %>
+
+                                </a>
+
+                            </td>
+
+                            <td>
+
+                                <%= station.protocol || "-" %>
+
+                            </td>
+
+                        </tr>
+
+                        <% }) %>
+
+                </tbody>
+
+            </table>
+
+            <% } %>
+
+</div>
 
 
 <!-- =========================
      Hardware
 ========================= -->
 
-<h2>Hardware</h2>
+<div class="panel">
 
+    <div class="panel-header">
 
-<a href="/hardware/new?center_id=<%= center.id %>">
-    + Add Hardware
-</a>
+        <h2>Hardware</h2>
 
+        <a href="/centers/<%= center.id %>/hardware/new" class="btn btn-primary btn-sm">
 
-<% if (hardware.length === 0) { %>
+            <i class="fa-solid fa-plus"></i>
+            Add Hardware
 
-    <p>
-        No hardware registered.
-    </p>
+        </a>
 
+    </div>
 
-<% } else { %>
+    <% if(hardware.length===0){ %>
 
+        <div style="padding:25px;text-align:center;">
 
-<table border="1">
+            No hardware registered.
 
-<tr>
-    <th>Type</th>
-    <th>Brand</th>
-    <th>Quantity</th>
-    <th>Status</th>
-</tr>
+        </div>
 
+        <% }else{ %>
 
-<% hardware.forEach(item => { %>
+            <table class="dashboard-table">
 
-<tr>
+                <thead>
 
-<td>
-    <%= item.type %>
-</td>
+                    <tr>
+                        <th>Type</th>
+                        <th>Brand</th>
+                        <th>Model</th>
+                        <th>Qty</th>
+                        <th>Status</th>
+                    </tr>
 
-<td>
-    <%= item.brand || "-" %>
-</td>
+                </thead>
 
-<td>
-    <%= item.quantity %>
-</td>
+                <tbody>
 
-<td>
-    <%= item.status %>
-</td>
+                    <% hardware.forEach(item=>{ %>
 
-</tr>
+                        <tr>
 
+                            <td>
+                                <%= item.type %>
+                            </td>
 
-<% }) %>
+                            <td>
+                                <%= item.brand || "-" %>
+                            </td>
 
+                            <td>
+                                <%= item.model || "-" %>
+                            </td>
 
-</table>
+                            <td>
+                                <%= item.quantity %>
+                            </td>
 
+                            <td>
+                                <%= item.status %>
+                            </td>
 
-<% } %>
+                        </tr>
+
+                        <% }) %>
+
+                </tbody>
+
+            </table>
+
+            <% } %>
+
+</div>

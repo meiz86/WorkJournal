@@ -1,17 +1,14 @@
 const db = require("../database/db");
 
-
 // ============================
 // Get All Stations
 // ============================
 
-exports.getAll = (callback)=>{
-
-    const sql = `
+exports.getAll = (callback) => {
+  const sql = `
         SELECT
             id,
             name,
-            protocol,
             notes
 
         FROM stations
@@ -19,23 +16,18 @@ exports.getAll = (callback)=>{
         ORDER BY name
     `;
 
-    db.all(sql, callback);
-
+  db.all(sql, callback);
 };
-
-
 
 // ============================
 // Get Station By ID
 // ============================
 
-exports.getById = (id, callback)=>{
-
-    const sql = `
+exports.getById = (id, callback) => {
+  const sql = `
         SELECT
             id,
             name,
-            protocol,
             notes
 
         FROM stations
@@ -43,98 +35,79 @@ exports.getById = (id, callback)=>{
         WHERE id = ?
     `;
 
-    db.get(sql,[id],callback);
-
+  db.get(sql, [id], callback);
 };
-
-
 
 // ============================
 // Create Station
 // ============================
 
-exports.create = (data,callback)=>{
-
-    const sql = `
-
+exports.create = (data, callback) => {
+  const sql = `
         INSERT INTO stations
         (
             name,
-            protocol,
             notes
         )
 
-        VALUES (?,?,?)
-
+        VALUES (?,?)
     `;
 
-
-    db.run(
-        sql,
-        [
-            data.name,
-            data.protocol,
-            data.notes
-        ],
-        callback
-    );
-
+  db.run(sql, [data.name, data.notes], callback);
 };
-
-
 
 // ============================
 // Update Station
 // ============================
 
-exports.update = (id,data,callback)=>{
-
-
-    const sql = `
-
+exports.update = (id, data, callback) => {
+  const sql = `
         UPDATE stations
 
         SET
+            name = ?,
+            notes = ?
 
-            name=?,
-            protocol=?,
-            notes=?
-
-        WHERE id=?
-
+        WHERE id = ?
     `;
 
-
-    db.run(
-        sql,
-        [
-            data.name,
-            data.protocol,
-            data.notes,
-            id
-        ],
-        callback
-    );
-
+  db.run(sql, [data.name, data.notes, id], callback);
 };
-
-
 
 // ============================
 // Delete Station
 // ============================
 
-exports.remove = (id,callback)=>{
-
-    const sql = `
-
+exports.remove = (id, callback) => {
+  const sql = `
         DELETE FROM stations
-
-        WHERE id=?
-
+        WHERE id = ?
     `;
 
+  db.run(sql, [id], callback);
+};
 
-    db.run(sql,[id],callback);
+// ============================
+// Search Stations
+// ============================
 
+exports.search = (search, callback) => {
+  const sql = `
+        SELECT
+            id,
+            name,
+            notes
+
+        FROM stations
+
+        WHERE
+            name LIKE ?
+            OR notes LIKE ?
+
+        ORDER BY name
+    `;
+
+  const keyword = `%${search}%`;
+
+  db.all(sql, [keyword, keyword], callback);
 };

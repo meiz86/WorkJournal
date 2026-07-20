@@ -1,13 +1,11 @@
 const db = require("../database/db");
 
-
 // ============================
 // Hardware by Center
 // ============================
 
 exports.getByCenter = (centerId, callback) => {
-
-    const sql = `
+  const sql = `
         SELECT
             id,
             center_id,
@@ -28,35 +26,29 @@ exports.getByCenter = (centerId, callback) => {
         ORDER BY type, brand
     `;
 
-    db.all(sql, [centerId], callback);
-
+  db.all(sql, [centerId], callback);
 };
-
 
 // ============================
 // Get One Hardware
 // ============================
 
 exports.getById = (id, callback) => {
-
-    const sql = `
+  const sql = `
         SELECT *
         FROM hardware
         WHERE id = ?
     `;
 
-    db.get(sql, [id], callback);
-
+  db.get(sql, [id], callback);
 };
-
 
 // ============================
 // Create
 // ============================
 
 exports.create = (data, callback) => {
-
-    const sql = `
+  const sql = `
         INSERT INTO hardware
         (
             center_id,
@@ -73,33 +65,29 @@ exports.create = (data, callback) => {
         VALUES (?,?,?,?,?,?,?,?,?)
     `;
 
-
-    db.run(
-        sql,
-        [
-            data.center_id,
-            data.type,
-            data.brand,
-            data.model,
-            data.quantity,
-            data.serial_number,
-            data.ip_address,
-            data.status,
-            data.notes
-        ],
-        callback
-    );
-
+  db.run(
+    sql,
+    [
+      data.center_id,
+      data.type,
+      data.brand,
+      data.model,
+      data.quantity,
+      data.serial_number,
+      data.ip_address,
+      data.status,
+      data.notes,
+    ],
+    callback,
+  );
 };
-
 
 // ============================
 // Update
 // ============================
 
 exports.update = (id, data, callback) => {
-
-    const sql = `
+  const sql = `
         UPDATE hardware
 
         SET
@@ -116,39 +104,34 @@ exports.update = (id, data, callback) => {
         WHERE id = ?
     `;
 
-
-    db.run(
-        sql,
-        [
-            data.type,
-            data.brand,
-            data.model,
-            data.quantity,
-            data.serial_number,
-            data.ip_address,
-            data.status,
-            data.notes,
-            id
-        ],
-        callback
-    );
-
+  db.run(
+    sql,
+    [
+      data.type,
+      data.brand,
+      data.model,
+      data.quantity,
+      data.serial_number,
+      data.ip_address,
+      data.status,
+      data.notes,
+      id,
+    ],
+    callback,
+  );
 };
-
 
 // ============================
 // Delete
 // ============================
 
 exports.remove = (id, callback) => {
-
-    db.run(
-        `
+  db.run(
+    `
         DELETE FROM hardware
         WHERE id = ?
         `,
-        [id],
-        callback
-    );
-
+    [id],
+    callback,
+  );
 };
