@@ -107,7 +107,6 @@
 
 </div>
 
-
 <!-- =========================
      Stations
 ========================= -->
@@ -127,62 +126,58 @@
 
     </div>
 
-    <% if(stations.length===0){ %>
+    <% if (stations.length === 0) { %>
 
         <div style="padding:25px;text-align:center;">
-
             No stations assigned.
-
         </div>
 
-        <% }else{ %>
+    <% } else { %>
 
-            <table class="dashboard-table">
+        <table class="dashboard-table">
 
-                <thead>
+            <thead>
+
+                <tr>
+                    <th>Station</th>
+                    <th>Connection Protocol</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <% stations.forEach(station => { %>
 
                     <tr>
-                        <th>Name</th>
-                        <th>Protocol</th>
+
+                        <td>
+
+                            <a href="/stations/<%= station.id %>">
+                                <%= station.name %>
+                            </a>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-info">
+                                <%= station.protocol %>
+                            </span>
+
+                        </td>
+
                     </tr>
 
-                </thead>
+                <% }) %>
 
-                <tbody>
+            </tbody>
 
-                    <% stations.forEach(station=>{ %>
+        </table>
 
-                        <tr>
-
-                            <td>
-
-                                <a href="/stations/<%= station.id %>">
-
-                                    <%= station.name %>
-
-                                </a>
-
-                            </td>
-
-                            <td>
-
-                                <%= station.protocol || "-" %>
-
-                            </td>
-
-                        </tr>
-
-                        <% }) %>
-
-                </tbody>
-
-            </table>
-
-            <% } %>
+    <% } %>
 
 </div>
-
-
 <!-- =========================
      Hardware
 ========================= -->

@@ -3,54 +3,40 @@
     <div class="page-title">
 
         <h1>
-
             <i class="fa-solid fa-tower-cell"></i>
-
             Stations
-
         </h1>
 
-        <p>
-
-            Shared station catalog
-
-        </p>
+        <p>Station Catalog</p>
 
     </div>
 
     <a href="/stations/new" class="btn btn-primary">
-
         <i class="fa-solid fa-plus"></i>
-
         New Station
-
     </a>
 
 </div>
 
 <form method="GET" action="/stations">
 
-<div class="card">
+    <div class="card">
 
-    <input
-        type="text"
-        name="search"
-        placeholder="Search station..."
-        value="<%= search %>">
+        <input
+            type="text"
+            name="search"
+            placeholder="Search station..."
+            value="<%= search %>">
 
-    <button class="btn btn-primary">
+        <button class="btn btn-primary">
+            Search
+        </button>
 
-        Search
+        <a href="/stations" class="btn btn-secondary">
+            Clear
+        </a>
 
-    </button>
-
-    <a href="/stations" class="btn btn-secondary">
-
-        Clear
-
-    </a>
-
-</div>
+    </div>
 
 </form>
 
@@ -58,85 +44,85 @@
 
 <table class="table">
 
-<thead>
+    <thead>
 
-<tr>
+        <tr>
+            <th>Station</th>
+            <th>Center</th>
+            <th>Protocol111</th>
+            <th>Media</th>
+            <th>Actions</th>
+        </tr>
 
-    <th>Name</th>
-    <th>Protocol</th>
-    <th>Actions</th>
+    </thead>
 
-</tr>
+    <tbody>
 
-</thead>
+        <% if (stations.length === 0) { %>
 
-<tbody>
+            <tr>
+                <td colspan="5">
+                    No stations found.
+                </td>
+            </tr>
 
-<% if(stations.length===0){ %>
+        <% } %>
 
-<tr>
+        <% stations.forEach(station => { %>
 
-<td colspan="3">
+            <tr>
 
-No stations found.
+                <td>
+                    <a href="/stations/<%= station.id %>">
+                        <%= station.name %>
+                    </a>
+                </td>
 
-</td>
+                <td>
+                    <a href="/centers/<%= station.center_id %>">
+                        <%= station.center_name %>
+                    </a>
+                </td>
 
-</tr>
+                <td>
+                    <%= station.protocol %>
+                </td>
 
-<% } %>
+                <td>
+                    <%= station.media || "-" %>
+                </td>
 
-<% stations.forEach(station=>{ %>
+                <td>
 
-<tr>
+                    <a
+                        class="btn btn-secondary btn-sm"
+                        href="/stations/<%= station.id %>/edit">
 
-<td>
+                        <i class="fa-solid fa-pen"></i>
 
-<a href="/stations/<%= station.id %>">
+                    </a>
 
-<%= station.name %>
+                    <form
+                        action="/stations/<%= station.id %>/delete"
+                        method="POST"
+                        style="display:inline;">
 
-</a>
+                        <button
+                            class="btn btn-danger btn-sm"
+                            onclick="return confirm('Delete this station?')">
 
-</td>
+                            <i class="fa-solid fa-trash"></i>
 
-<td>
+                        </button>
 
-<%= station.protocol || "-" %>
+                    </form>
 
-</td>
+                </td>
 
-<td>
+            </tr>
 
-<a
-class="btn btn-secondary"
-href="/stations/<%= station.id %>/edit">
+        <% }) %>
 
-Edit
-
-</a>
-
-<form
-action="/stations/<%= station.id %>/delete"
-method="POST"
-style="display:inline;">
-
-<button
-class="btn btn-danger"
-onclick="return confirm('Delete station?')">
-
-Delete
-
-</button>
-
-</form>
-
-</td>
-
-</tr>
-
-<% }) %>
-
-</tbody>
+    </tbody>
 
 </table>

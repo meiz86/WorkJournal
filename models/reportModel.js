@@ -207,7 +207,90 @@ function getProjectReport(userId, projectId, callback) {
 
   db.all(sql, params, callback);
 }
+// ============================
+// Station Report
+// ============================
 
+
+// ============================
+// Centers List
+// ============================
+
+function getCenters(callback) {
+  db.all(
+    `
+    SELECT
+      id,
+      name
+    FROM centers
+    ORDER BY name
+    `,
+    [],
+    callback
+  );
+}
+
+// ============================
+// Station Report
+// ============================
+
+// ============================
+// Station Report
+// ============================
+
+function getStationReport(filters, callback) {
+  let sql = `
+    SELECT
+      s.id,
+      s.name,
+      s.protocol,
+      s.media,
+      s.notes,
+      c.name AS center_name
+    FROM stations s
+    LEFT JOIN centers c
+      ON c.id = s.center_id
+    WHERE 1=1
+  `;
+
+  const params = [];
+
+  if (filters.center_id) {
+    sql += " AND s.center_id = ?";
+    params.push(filters.center_id);
+  }
+
+  if (filters.protocol) {
+    sql += " AND s.protocol = ?";
+    params.push(filters.protocol);
+  }
+
+  if (filters.media) {
+    sql += " AND s.media = ?";
+    params.push(filters.media);
+  }
+
+  if (filters.search) {
+    sql += `
+      AND (
+        s.name LIKE ?
+        OR c.name LIKE ?
+        OR s.notes LIKE ?
+      )
+    `;
+
+    const keyword = `%${filters.search}%`;
+    params.push(keyword, keyword, keyword);
+  }
+
+  sql += `
+    ORDER BY
+      c.name,
+      s.name
+  `;
+
+  db.all(sql, params, callback);
+}
 module.exports = {
   getDailyReport,
   getProjects,
@@ -215,4 +298,7 @@ module.exports = {
   getWeeklyReport,
   getMonthlyReport,
   getProjectReport,
+
+  getCenters,
+  getStationReport,
 };

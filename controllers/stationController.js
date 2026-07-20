@@ -1,5 +1,5 @@
 const Station = require("../models/stationModel");
-const CenterStationAssignment = require("../models/centerStationAssignmentModel");
+const Center = require("../models/centerModel");
 
 // ============================
 // List Stations
@@ -45,28 +45,25 @@ exports.show = (req, res) => {
       return res.status(404).send("Station not found.");
     }
 
-    CenterStationAssignment.getCentersForStation(
-      req.params.id,
-      (err, centers) => {
-        if (err) return res.send(err.message);
-
-        res.render("stations/show", {
-          title: station.name,
-          station,
-          centers,
-        });
-      },
-    );
+    res.render("stations/show", {
+      title: station.name,
+      station,
+    });
   });
 };
 
 // ============================
-// New Station Form
+// New Station
 // ============================
 
 exports.newForm = (req, res) => {
-  res.render("stations/new", {
-    title: "New Station",
+  Center.getAll((err, centers) => {
+    if (err) return res.send(err.message);
+
+    res.render("stations/new", {
+      title: "New Station",
+      centers,
+    });
   });
 };
 
@@ -83,7 +80,7 @@ exports.create = (req, res) => {
 };
 
 // ============================
-// Edit Station Form
+// Edit Station
 // ============================
 
 exports.editForm = (req, res) => {
@@ -94,9 +91,14 @@ exports.editForm = (req, res) => {
       return res.status(404).send("Station not found.");
     }
 
-    res.render("stations/edit", {
-      title: "Edit Station",
-      station,
+    Center.getAll((err, centers) => {
+      if (err) return res.send(err.message);
+
+      res.render("stations/edit", {
+        title: "Edit Station",
+        station,
+        centers,
+      });
     });
   });
 };

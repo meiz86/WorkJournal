@@ -1,12 +1,72 @@
 const Report = require("../models/reportModel");
+const Station = require("../models/stationModel");
+const Center = require("../models/centerModel");
+const chartService = require("../services/chartService");
+
 const ExcelJS = require("exceljs");
 const pdfService = require("../services/pdfService");
+
+// =================================================
+// Reports Home
+// =================================================
 
 exports.index = (req, res) => {
   res.render("reports/index", {
     title: "Reports",
   });
 };
+
+// =================================================
+// Station Report
+// =================================================
+
+exports.stationReport = (req, res) => {
+  const filters = {
+    center_id: req.query.center_id || "",
+    protocol: req.query.protocol || "",
+    media: req.query.media || "",
+    search: req.query.search || "",
+  };
+
+  Center.getAll((err, centers) => {
+    if (err) return res.send(err.message);
+
+    Station.getReport(filters, (err, stations) => {
+      if (err) return res.send(err.message);
+
+      res.render("reports/stations", {
+        title: "Station Report",
+        centers,
+        stations,
+        filters,
+      });
+    });
+  });
+};
+
+// =================================================
+// Hardware Report
+// =================================================
+
+exports.hardwareReport = (req, res) => {
+  res.render("reports/hardware", {
+    title: "Hardware Report",
+  });
+};
+
+// =================================================
+// Center Report
+// =================================================
+
+exports.centerReport = (req, res) => {
+  res.render("reports/centers", {
+    title: "Center Report",
+  });
+};
+
+// =================================================
+// Existing Reports
+// =================================================
 
 exports.weekly = (req, res) => {
   let week = req.query.week;
@@ -143,9 +203,7 @@ exports.dailyExcel = async (req, res) => {
         { header: "Status", key: "status", width: 15 },
       ];
 
-      activities.forEach((activity) => {
-        sheet.addRow(activity);
-      });
+      activities.forEach((activity) => sheet.addRow(activity));
 
       res.setHeader(
         "Content-Type",
@@ -161,4 +219,221 @@ exports.dailyExcel = async (req, res) => {
       res.end();
     },
   );
+};
+// =================================================
+// Station Report PDF
+// =================================================
+
+// =================================================
+// Station Report Excel
+// =================================================
+
+exports.stationExcel = async (req, res) => {
+  const filters = {
+    center_id: req.query.center_id || "",
+    protocol: req.query.protocol || "",
+    media: req.query.media || "",
+    search: req.query.search || "",
+  };
+
+  Station.getReport(filters, async (err, stations) => {
+    if (err) return res.send(err.message);
+
+    const workbook = new ExcelJS.Workbook();
+
+    // =========================================================
+    // Stations Sheet
+    // =========================================================
+
+    const sheet = workbook.addWorksheet("Stations");
+
+    sheet.columns = [
+      { header: "Center", key: "center_name", width: 30 },
+      { header: "Station", key: "name", width: 30 },
+      { header: "Protocol", key: "protocol", width: 18 },
+      { header: "Media", key: "media", width: 18 },
+      { header: "Notes", key: "notes", width: 40 },
+    ];
+
+    stations.forEach((station) => sheet.addRow(station));
+
+    // Header Style
+    sheet.getRow(1).font = {
+      bold: true,
+      color: { argb: "FFFFFFFF" },
+    };
+
+    sheet.getRow(1).fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "1F4E78" },
+    };
+
+    sheet.getRow(1).alignment = {
+      horizontal: "center",
+      vertical: "middle",
+    };
+
+    sheet.getRow(1).height = 22;
+
+    // =========================================================
+    // Statistics
+    // =========================================================
+
+    const protocolStats = {};
+    const mediaStats = {};
+
+    stations.forEach((station) => {
+      const protocol = station.protocol || "Unknown";
+      const media = station.media || "Unknown";
+
+      protocolStats[protocol] = (protocolStats[protocol] || 0) + 1;
+      mediaStats[media] = (mediaStats[media] || 0) + 1;
+    });
+
+    // =========================================================
+    // Generate Charts
+    // =========================================================
+
+    const protocolChart = await chartService.generatePieChart(
+      "Protocols",
+      protocolStats,
+    );
+
+    const mediaChart = await chartService.generatePieChart("Media", mediaStats);
+
+    // =========================================================
+    // Summary Sheet
+    // =========================================================
+
+    const summary = workbook.addWorksheet("Summary");
+
+    summary.mergeCells("A1:D1");
+
+    summary.getCell("A1").value = "Station Report Summary";
+
+    summary.getCell("A1").font = {
+      bold: true,
+      size: 18,
+    };
+
+    summary.getCell("A1").alignment = {
+      horizontal: "center",
+    };
+
+    summary.addRow([]);
+
+    summary.addRow([
+      "Total Centers",
+      new Set(stations.map((s) => s.center_name)).size,
+    ]);
+
+    summary.addRow(["Total Stations", stations.length]);
+
+    summary.addRow([]);
+
+    summary.addRow(["Protocol", "Count"]);
+
+    Object.entries(protocolStats).forEach(([protocol, count]) => {
+      summary.addRow([protocol, count]);
+    });
+
+    summary.addRow([]);
+
+    summary.addRow(["Media", "Count"]);
+
+    Object.entries(mediaStats).forEach(([media, count]) => {
+      summary.addRow([media, count]);
+    });
+
+    summary.columns.forEach((column) => {
+      column.width = 22;
+    });
+
+    // =========================================================
+    // Add Charts
+    // =========================================================
+
+    const protocolImageId = workbook.addImage({
+      buffer: protocolChart,
+      extension: "png",
+    });
+
+    const mediaImageId = workbook.addImage({
+      buffer: mediaChart,
+      extension: "png",
+    });
+
+    summary.addImage(protocolImageId, {
+      tl: { col: 4, row: 1 },
+      ext: { width: 340, height: 240 },
+    });
+
+    summary.addImage(mediaImageId, {
+      tl: { col: 4, row: 18 },
+      ext: { width: 340, height: 240 },
+    });
+
+    // =========================================================
+    // Download
+    // =========================================================
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=station-report.xlsx",
+    );
+
+    await workbook.xlsx.write(res);
+
+    res.end();
+  });
+};
+
+// =================================================
+// Station Report PDF
+// =================================================
+
+exports.stationPDF = (req, res) => {
+  const filters = {
+    center_id: req.query.center_id || "",
+    protocol: req.query.protocol || "",
+    media: req.query.media || "",
+    search: req.query.search || "",
+  };
+
+  Station.getReport(filters, async (err, stations) => {
+    if (err) return res.send(err.message);
+
+    const protocolStats = {};
+    const mediaStats = {};
+
+    stations.forEach((station) => {
+      const protocol = station.protocol || "Unknown";
+      const media = station.media || "Unknown";
+
+      protocolStats[protocol] = (protocolStats[protocol] || 0) + 1;
+      mediaStats[media] = (mediaStats[media] || 0) + 1;
+    });
+
+    const protocolChart = await chartService.generatePieChart(
+      "Protocols",
+      protocolStats,
+    );
+
+    const mediaChart = await chartService.generatePieChart("Media", mediaStats);
+
+    pdfService.generateStationReport(
+      res,
+      stations,
+      protocolStats,
+      mediaStats,
+      protocolChart,
+      mediaChart,
+    );
+  });
 };

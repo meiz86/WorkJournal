@@ -32,11 +32,7 @@ const navigation = [
     icon: "fa-solid fa-tower-broadcast",
     url: "/centers",
   },
-  {
-    title: "Settings",
-    icon: "fa-solid fa-gears",
-    url: "/settings",
-  },
+
   {
     title: "Stations",
     icon: "fa-solid fa-tower-cell",

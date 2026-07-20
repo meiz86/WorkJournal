@@ -1,4 +1,16 @@
 const PDFDocument = require("pdfkit");
+const jalaali = require("jalaali-js");
+function getShamsiDate() {
+  const now = new Date();
+
+  const j = jalaali.toJalaali(
+    now.getFullYear(),
+    now.getMonth() + 1,
+    now.getDate(),
+  );
+
+  return `${j.jy}-${String(j.jm).padStart(2, "0")}-${String(j.jd).padStart(2, "0")}`;
+}
 function generateReport(res, options) {
   const { title, rows } = options;
 
@@ -20,8 +32,6 @@ function generateReport(res, options) {
   drawSummary(doc, rows);
   drawTable(doc, rows);
   drawDescriptions(doc, rows);
-
-  doc.end();
 }
 function drawHeader(doc, title) {
   doc.fontSize(22).text("WORK JOURNAL", {
@@ -34,7 +44,7 @@ function drawHeader(doc, title) {
 
   doc.moveDown();
 
-  doc.fontSize(10).text("Generated: " + new Date().toLocaleString());
+  doc.fontSize(10).text("Generated : " + getShamsiDate());
 
   doc.moveDown();
 }
@@ -206,7 +216,206 @@ function drawDescriptions(doc, activities) {
   });
 }
 function drawFooter(doc) {}
+function drawStatBar(doc, label, count, total, maxWidth = 180) {
+  const percent = total === 0 ? 0 : count / total;
 
+  const barWidth = percent * maxWidth;
+
+  const y = doc.y;
+
+  doc.font("Helvetica").fontSize(11);
+
+  doc.text(label, 40, y, {
+    width: 90,
+  });
+
+  // Background
+
+  doc.rect(150, y + 4, maxWidth, 10).fill("#e5e7eb");
+
+  // Filled bar
+
+  doc.rect(150, y + 4, barWidth, 10).fill("#2563eb");
+
+  doc.fillColor("black");
+
+  doc.text(`${count} (${(percent * 100).toFixed(1)}%)`, 350, y);
+
+  doc.moveDown(1.3);
+}
+
+function generateStationReport(
+  res,
+  stations,
+  protocolStats,
+  mediaStats,
+  protocolChart,
+  mediaChart,
+) {
+  const doc = new PDFDocument({
+    margin: 40,
+    size: "A4",
+  });
+
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader(
+    "Content-Disposition",
+    "attachment; filename=station-report.pdf",
+  );
+
+  doc.pipe(res);
+
+  // ==========================================================
+  // Header
+  // ==========================================================
+
+  doc.font("Helvetica-Bold").fontSize(20).text("Station Report", {
+    align: "center",
+  });
+
+  doc.moveDown(0.5);
+
+  doc
+    .font("Helvetica")
+    .fontSize(10)
+    .text("Generated : " + getShamsiDate(), {
+      align: "right",
+    });
+
+  doc.moveDown();
+
+  // ==========================================================
+  // Table
+  // ==========================================================
+
+  let y = doc.y;
+
+  doc.font("Helvetica-Bold");
+
+  doc.text("Center", 40, y, { width: 120 });
+  doc.text("Station", 170, y, { width: 150 });
+  doc.text("Protocol", 330, y, { width: 80 });
+  doc.text("Media", 430, y, { width: 90 });
+
+  y += 18;
+
+  doc.moveTo(40, y).lineTo(550, y).stroke();
+
+  y += 10;
+
+  doc.font("Helvetica");
+
+  stations.forEach((s) => {
+    if (y > 730) {
+      doc.addPage();
+
+      y = 50;
+
+      doc.font("Helvetica-Bold");
+
+      doc.text("Center", 40, y, { width: 120 });
+      doc.text("Station", 170, y, { width: 150 });
+      doc.text("Protocol", 330, y, { width: 80 });
+      doc.text("Media", 430, y, { width: 90 });
+
+      y += 18;
+
+      doc.moveTo(40, y).lineTo(550, y).stroke();
+
+      y += 10;
+
+      doc.font("Helvetica");
+    }
+
+    doc.text(s.center_name || "-", 40, y, { width: 120 });
+    doc.text(s.name || "-", 170, y, { width: 150 });
+    doc.text(s.protocol || "-", 330, y, { width: 80 });
+    doc.text(s.media || "-", 430, y, { width: 90 });
+
+    y += 20;
+  });
+
+  // ==========================================================
+  // Summary Page
+  // ==========================================================
+
+  doc.addPage();
+
+  doc.font("Helvetica-Bold").fontSize(18).text("Summary");
+
+  doc.moveDown();
+
+  const totalStations = stations.length;
+  const totalCenters = new Set(stations.map((s) => s.center_name)).size;
+
+  doc.font("Helvetica").fontSize(12);
+
+  doc.text(`Total Centers : ${totalCenters}`);
+  doc.text(`Total Stations : ${totalStations}`);
+
+  doc.moveDown();
+
+  // ==========================================================
+  // Protocol Statistics
+  // ==========================================================
+
+  doc.font("Helvetica-Bold").fontSize(14).text("Protocols");
+
+  doc.moveDown(0.5);
+
+  Object.entries(protocolStats).forEach(([protocol, count]) => {
+    drawStatBar(doc, protocol, count, totalStations);
+  });
+  // ==========================================================
+  // Media Statistics
+  // ==========================================================
+
+  doc.font("Helvetica-Bold").fontSize(14).text("Media");
+
+  doc.moveDown(0.5);
+
+  doc.font("Helvetica");
+
+  Object.entries(mediaStats).forEach(([media, count]) => {
+    drawStatBar(doc, media, count, totalStations);
+  });
+
+  // IMPORTANT
+  // Finish PDF stream
+  // ==========================================================
+  // Charts
+  // ==========================================================
+
+  doc.addPage();
+
+  doc.font("Helvetica-Bold").fontSize(18).text("Charts", {
+    align: "center",
+  });
+
+  doc.moveDown();
+
+  doc.fontSize(14).text("Protocol Distribution");
+
+  doc.moveDown(0.5);
+
+  doc.image(protocolChart, {
+    fit: [240, 240],
+    align: "center",
+  });
+
+  doc.moveDown(2);
+
+  doc.fontSize(14).text("Media Distribution");
+
+  doc.moveDown(0.5);
+
+  doc.image(mediaChart, {
+    fit: [240, 240],
+    align: "center",
+  });
+  doc.end();
+}
 module.exports = {
   generateReport,
+  generateStationReport,
 };

@@ -86,22 +86,39 @@ app.use("/centers", requireLogin, centerRoutes);
 app.use("/stations", requireLogin, stationRoutes);
 app.use("/centers/:centerId/hardware", requireLogin, hardwareRoutes);
 app.use("/settings", settingsRoutes);
+
+// ======================================
+// Error Handling
+// ======================================
+
+app.use((req, res) => {
+  res.status(404).render("errors/404", {
+    title: "Page Not Found",
+  });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err);
+
+  res.status(500).render("errors/500", {
+    title: "Server Error",
+
+    error: process.env.NODE_ENV === "development" ? err : null,
+  });
+});
+
 // ======================================
 // Server
 // ======================================
-// app.use((req, res) => {
-//   res.status(404).render("errors/404", {
-//     title: "Page Not Found",
-//   });
-// });
-// app.use((err, req, res, next) => {
-//   console.error(err);
 
-//   res.status(500).render("errors/500", {
-//     title: "Server Error",
-//     error: process.env.NODE_ENV === "development" ? err : null,
-//   });
-// });
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});
+
+// ======================================
+// Server
+// ======================================
+
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });

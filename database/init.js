@@ -119,50 +119,32 @@ CREATE TABLE IF NOT EXISTS centers (
   // Stations
   // ===========================
 
-
-
-db.run(`
+  db.run(`
 CREATE TABLE IF NOT EXISTS stations (
-
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-    name TEXT NOT NULL UNIQUE,
-
-    notes TEXT,
-
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-
-);
-`);
-  // ===========================
-  // Center Station Assignments
-  // ===========================
-
-
-
-db.run(`
-CREATE TABLE IF NOT EXISTS center_station_assignments (
 
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 
     center_id INTEGER NOT NULL,
 
-    station_id INTEGER NOT NULL,
+    name TEXT NOT NULL,
 
     protocol TEXT NOT NULL,
+
+    media TEXT NOT NULL,
+
+    notes TEXT,
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY(center_id)
         REFERENCES centers(id)
         ON DELETE CASCADE,
 
-    FOREIGN KEY(station_id)
-        REFERENCES stations(id)
-        ON DELETE CASCADE,
-
-    UNIQUE(center_id, station_id)
+    UNIQUE(center_id, name)
 
 );
 `);
+
   // ===========================
   // Hardware
   // ===========================

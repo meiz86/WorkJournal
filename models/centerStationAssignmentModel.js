@@ -41,22 +41,10 @@ exports.remove = (centerId, stationId, callback) => {
 
 exports.getStationsForCenter = (centerId, callback) => {
   const sql = `
-        SELECT
-
-            s.id,
-            s.name,
-            s.notes,
-
-            csa.protocol
-
-        FROM center_station_assignments csa
-
-        INNER JOIN stations s
-            ON s.id = csa.station_id
-
-        WHERE csa.center_id = ?
-
-        ORDER BY s.name
+        SELECT id,name,notes,protocol,media,notes
+           FROM stations
+              WHERE center_id = ?
+                  ORDER BY name
     `;
 
   db.all(sql, [centerId], callback);

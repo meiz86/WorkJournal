@@ -1,114 +1,73 @@
 <div class="page-header">
+  <div class="page-title">
+    <h1>
+      <i class="fa-solid fa-tower-cell"></i>
+      <%= station.name %>
+    </h1>
 
-    <div class="page-title">
+    <p>Station Details</p>
+  </div>
 
-        <h1>
-            <i class="fa-solid fa-tower-cell"></i>
-            <%= station.name %>
-        </h1>
-
-        <p>Station Details</p>
-
-    </div>
-
-    <a href="/stations/<%= station.id %>/edit" class="btn btn-primary">
-        Edit
+  <div class="header-actions">
+    <a href="/stations" class="btn btn-secondary">
+      <i class="fa-solid fa-arrow-left"></i>
+      Back
     </a>
 
+    <a href="/stations/<%= station.id %>/edit" class="btn btn-primary">
+      <i class="fa-solid fa-pen"></i>
+      Edit
+    </a>
+  </div>
 </div>
 
-<div class="stats-grid">
-
-    <div class="card">
-
-        <h3>Centers Using This Station</h3>
-
-        <h2>
-            <%= centers.length %>
-        </h2>
-
-    </div>
-
-</div>
+<!-- =========================
+     Station Information
+========================= -->
 
 <div class="panel">
+  <div class="panel-header">
+    <h2>Station Information</h2>
+  </div>
 
-    <div class="panel-header">
-        <h2>Notes</h2>
-    </div>
+  <table class="dashboard-table">
+    <tbody>
+      <tr>
+        <th style="width: 220px">Station Name</th>
 
-    <p>
-        <%= station.notes || "No notes." %>
-    </p>
+        <td><%= station.name %></td>
+      </tr>
 
-</div>
+      <tr>
+        <th>Center</th>
 
-<div class="panel">
+        <td>
+          <a href="/centers/<%= station.center_id %>">
+            <%= station.center_name %>
+          </a>
+        </td>
+      </tr>
 
-    <div class="panel-header">
-        <h2>Assigned Centers</h2>
-    </div>
+      <tr>
+        <th>Protocol</th>
 
-    <table class="dashboard-table">
+        <td>
+          <span > <%= station.protocol %> </span>
+        </td>
+      </tr>
+      <tr>
+        <th>Media</th>
 
-        <thead>
+        <td>
+          <span > <%= station.media %> </span>
+        </td>
+      </tr>
 
-            <tr>
+      <tr>
+        <th>Notes</th>
 
-                <th>Center</th>
-
-                <th>Acronym</th>
-
-                <th>Protocol</th>
-
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            <% if (centers.length===0) { %>
-
-                <tr>
-
-                    <td colspan="3">
-                        This station is not assigned to any center.
-                    </td>
-
-                </tr>
-
-                <% } %>
-
-                    <% centers.forEach(center=> { %>
-
-                        <tr>
-
-                            <td>
-
-                                <a href="/centers/<%= center.id %>">
-                                    <%= center.name %>
-                                </a>
-
-                            </td>
-
-                            <td>
-                                <%= center.acronym %>
-                            </td>
-
-                            <td>
-
-                                <span class="badge badge-info">
-                                    <%= center.protocol %>
-                                </span>
-
-                            </td>
-
-                        </tr>
-
-                        <% }) %>
-
-        </tbody>
-
-    </table>
-
+        <td><%= station.notes || "No notes." %></td>
+      </tr>
+    </tbody>
+  </table>
 </div>

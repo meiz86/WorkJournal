@@ -806,3 +806,56 @@ canvas {
 
   font-weight: 600;
 }
+.error-page {
+  min-height: 70vh;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+}
+
+.error-card {
+  text-align: center;
+
+  background: white;
+
+  padding: 50px;
+
+  border-radius: 15px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+
+  max-width: 450px;
+}
+
+.error-card h1 {
+  font-size: 90px;
+
+  margin: 0;
+
+  color: #2563eb;
+}
+
+.error-card h2 {
+  margin-top: 10px;
+
+  font-size: 28px;
+}
+
+.error-card p {
+  color: #666;
+
+  margin: 20px 0 30px;
+}
+
+.error-icon {
+  font-size: 45px;
+
+  color: #f59e0b;
+}
+
+.error-icon.danger {
+  color: #dc2626;
+}

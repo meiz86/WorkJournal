@@ -1,31 +1,160 @@
 <div class="form-card">
+
     <form action="<%= action %>" method="POST">
+
+        <!-- Center -->
+
         <div class="form-group">
+
+            <label>Center</label>
+
+            <select name="center_id" required>
+
+                <% centers.forEach(center => { %>
+
+                    <option
+                        value="<%= center.id %>"
+                        <%= station && station.center_id == center.id ? "selected" : "" %>>
+                        <%= center.name %>
+                    </option>
+
+                <% }) %>
+
+            </select>
+
+        </div>
+
+        <!-- Station Name -->
+
+        <div class="form-group">
+
             <label>Station Name</label>
 
-            <input type="text" name="name" value="<%= station ? station.name : '' %>" required />
+            <input
+                type="text"
+                name="name"
+                value="<%= station ? station.name : '' %>"
+                required>
+
         </div>
 
+        <!-- Protocol -->
+
         <div class="form-group">
+
             <label>Connection Protocol</label>
 
-            <input type="text" name="protocol" placeholder="IEC104, DNP3, Modbus..."
-                value="<%= station ? station.protocol : '' %>" />
+            <select name="protocol" required>
+
+                <option value="IEC101"
+                    <%= station && station.protocol==="IEC101" ? "selected" : "" %>>
+                    IEC101
+                </option>
+
+                <option value="IEC104"
+                    <%= station && station.protocol==="IEC104" ? "selected" : "" %>>
+                    IEC104
+                </option>
+
+                <option value="Modbus"
+                    <%= station && station.protocol==="Modbus" ? "selected" : "" %>>
+                    Modbus
+                </option>
+
+                <option value="DNP3"
+                    <%= station && station.protocol==="DNP3" ? "selected" : "" %>>
+                    DNP3
+                </option>
+
+                <option value="TASE II"
+                    <%= station && station.protocol==="TASE II" ? "selected" : "" %>>
+                    TASE II
+                </option>
+
+            </select>
+
         </div>
 
+        <!-- Media -->
+
         <div class="form-group">
+
+            <label>Communication Media</label>
+
+            <select name="media" required>
+
+                <option value="Fiber"
+                    <%= station && station.media==="Fiber" ? "selected" : "" %>>
+                    Fiber
+                </option>
+
+                <option value="PLC"
+                    <%= station && station.media==="PLC" ? "selected" : "" %>>
+                    PLC
+                </option>
+
+                <option value="Microwave"
+                    <%= station && station.media==="Microwave" ? "selected" : "" %>>
+                    Microwave
+                </option>
+
+                <option value="Radio"
+                    <%= station && station.media==="Radio" ? "selected" : "" %>>
+                    Radio
+                </option>
+
+                <option value="Ethernet"
+                    <%= station && station.media==="Ethernet" ? "selected" : "" %>>
+                    Ethernet
+                </option>
+
+                <option value="VSAT"
+                    <%= station && station.media==="VSAT" ? "selected" : "" %>>
+                    VSAT
+                </option>
+
+                <option value="4G/LTE"
+                    <%= station && station.media==="4G/LTE" ? "selected" : "" %>>
+                    4G/LTE
+                </option>
+
+                <option value="Other"
+                    <%= station && station.media==="Other" ? "selected" : "" %>>
+                    Other
+                </option>
+
+            </select>
+
+        </div>
+
+        <!-- Notes -->
+
+        <div class="form-group">
+
             <label>Notes</label>
 
             <textarea name="notes" rows="5"><%= station ? station.notes : '' %></textarea>
+
         </div>
 
         <div class="form-actions">
+
             <button class="btn btn-primary">
+
                 <i class="fa-solid fa-floppy-disk"></i>
+
                 Save Station
+
             </button>
 
-            <a href="/stations" class="btn btn-secondary"> Cancel </a>
+            <a href="/stations" class="btn btn-secondary">
+
+                Cancel
+
+            </a>
+
         </div>
+
     </form>
+
 </div>

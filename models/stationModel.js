@@ -7,13 +7,20 @@ const db = require("../database/db");
 exports.getAll = (callback) => {
   const sql = `
         SELECT
-            id,
-            name,
-            notes
+            s.id,
+            s.center_id,
+            s.name,
+            s.protocol,
+            s.media,
+            s.notes,
+            c.name AS center_name
 
-        FROM stations
+        FROM stations s
 
-        ORDER BY name
+        LEFT JOIN centers c
+            ON c.id = s.center_id
+
+        ORDER BY c.name, s.name
     `;
 
   db.all(sql, callback);
@@ -26,13 +33,15 @@ exports.getAll = (callback) => {
 exports.getById = (id, callback) => {
   const sql = `
         SELECT
-            id,
-            name,
-            notes
+            s.*,
+            c.name AS center_name
 
-        FROM stations
+        FROM stations s
 
-        WHERE id = ?
+        LEFT JOIN centers c
+            ON c.id = s.center_id
+
+        WHERE s.id = ?
     `;
 
   db.get(sql, [id], callback);
@@ -46,14 +55,21 @@ exports.create = (data, callback) => {
   const sql = `
         INSERT INTO stations
         (
+            center_id,
             name,
+            protocol,
+            media,
             notes
         )
 
-        VALUES (?,?)
+        VALUES (?,?,?,?,?)
     `;
 
-  db.run(sql, [data.name, data.notes], callback);
+  db.run(
+    sql,
+    [data.center_id, data.name, data.protocol, data.media, data.notes],
+    callback,
+  );
 };
 
 // ============================
@@ -65,13 +81,20 @@ exports.update = (id, data, callback) => {
         UPDATE stations
 
         SET
+            center_id = ?,
             name = ?,
+            protocol = ?,
+            media = ?,
             notes = ?
 
         WHERE id = ?
     `;
 
-  db.run(sql, [data.name, data.notes, id], callback);
+  db.run(
+    sql,
+    [data.center_id, data.name, data.protocol, data.media, data.notes, id],
+    callback,
+  );
 };
 
 // ============================
@@ -79,12 +102,14 @@ exports.update = (id, data, callback) => {
 // ============================
 
 exports.remove = (id, callback) => {
-  const sql = `
+  db.run(
+    `
         DELETE FROM stations
         WHERE id = ?
-    `;
-
-  db.run(sql, [id], callback);
+    `,
+    [id],
+    callback,
+  );
 };
 
 // ============================
@@ -92,22 +117,95 @@ exports.remove = (id, callback) => {
 // ============================
 
 exports.search = (search, callback) => {
-  const sql = `
-        SELECT
-            id,
-            name,
-            notes
-
-        FROM stations
-
-        WHERE
-            name LIKE ?
-            OR notes LIKE ?
-
-        ORDER BY name
-    `;
-
   const keyword = `%${search}%`;
 
-  db.all(sql, [keyword, keyword], callback);
+  const sql = `
+        SELECT
+            s.id,
+            s.center_id,
+            s.name,
+            s.protocol,
+            s.media,
+            s.notes,
+            c.name AS center_name
+
+        FROM stations s
+
+        LEFT JOIN centers c
+            ON c.id = s.center_id
+
+        WHERE
+            s.name LIKE ?
+            OR s.protocol LIKE ?
+            OR s.media LIKE ?
+            OR s.notes LIKE ?
+            OR c.name LIKE ?
+
+        ORDER BY c.name, s.name
+    `;
+
+  db.all(sql, [keyword, keyword, keyword, keyword, keyword], callback);
+};
+
+// ============================
+// Station Report
+// ============================
+
+exports.getReport = (filters, callback) => {
+  let sql = `
+        SELECT
+            s.id,
+            s.name,
+            s.protocol,
+            s.media,
+            s.notes,
+            c.id AS center_id,
+            c.name AS center_name
+
+        FROM stations s
+
+        LEFT JOIN centers c
+            ON c.id = s.center_id
+
+        WHERE 1=1
+    `;
+
+  const params = [];
+
+  if (filters.center_id) {
+    sql += ` AND s.center_id = ?`;
+    params.push(filters.center_id);
+  }
+
+  if (filters.protocol) {
+    sql += ` AND s.protocol = ?`;
+    params.push(filters.protocol);
+  }
+
+  if (filters.media) {
+    sql += ` AND s.media = ?`;
+    params.push(filters.media);
+  }
+
+  if (filters.search) {
+    sql += `
+        AND (
+            s.name LIKE ?
+            OR c.name LIKE ?
+            OR s.notes LIKE ?
+        )
+    `;
+
+    const keyword = `%${filters.search}%`;
+
+    params.push(keyword, keyword, keyword);
+  }
+
+  sql += `
+        ORDER BY
+            c.name,
+            s.name
+    `;
+
+  db.all(sql, params, callback);
 };

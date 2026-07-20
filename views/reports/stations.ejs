@@ -1,0 +1,220 @@
+<div class="page-header">
+
+    <div class="page-title">
+        <h1>
+            <i class="fa-solid fa-tower-cell"></i>
+            Station Report
+        </h1>
+
+        <p>Filter stations by Center, Protocol and Media</p>
+    </div>
+
+</div>
+
+<form method="GET" action="/reports/stations">
+
+<div class="card">
+
+    <div class="form-group">
+
+        <label>Center</label>
+
+        <select name="center_id">
+
+            <option value="">All Centers</option>
+
+            <% centers.forEach(center => { %>
+
+                <option
+                    value="<%= center.id %>"
+                    <%= filters.center_id == center.id ? "selected" : "" %>>
+
+                    <%= center.name %>
+
+                </option>
+
+            <% }) %>
+
+        </select>
+
+    </div>
+
+    <div class="form-group">
+
+        <label>Protocol</label>
+
+        <select name="protocol">
+
+            <option value="">All</option>
+
+            <option value="IEC101" <%= filters.protocol=="IEC101" ? "selected" : "" %>>IEC101</option>
+
+            <option value="IEC104" <%= filters.protocol=="IEC104" ? "selected" : "" %>>IEC104</option>
+
+            <option value="Modbus" <%= filters.protocol=="Modbus" ? "selected" : "" %>>Modbus</option>
+
+            <option value="DNP3" <%= filters.protocol=="DNP3" ? "selected" : "" %>>DNP3</option>
+
+            <option value="TASE II" <%= filters.protocol=="TASE II" ? "selected" : "" %>>TASE II</option>
+
+        </select>
+
+    </div>
+
+    <div class="form-group">
+
+        <label>Media</label>
+
+        <select name="media">
+
+            <option value="">All</option>
+
+            <option value="Fiber" <%= filters.media=="Fiber" ? "selected" : "" %>>Fiber</option>
+
+            <option value="PLC" <%= filters.media=="PLC" ? "selected" : "" %>>PLC</option>
+
+            <option value="Radio" <%= filters.media=="Radio" ? "selected" : "" %>>Radio</option>
+
+            <option value="GPRS" <%= filters.media=="GPRS" ? "selected" : "" %>>GPRS</option>
+
+            <option value="Microwave" <%= filters.media=="Microwave" ? "selected" : "" %>>Microwave</option>
+
+        </select>
+
+    </div>
+
+    <div class="form-group">
+
+        <label>Search</label>
+
+        <input
+            type="text"
+            name="search"
+            value="<%= filters.search %>"
+            placeholder="Station name">
+
+    </div>
+
+    <br>
+
+    <button class="btn btn-primary">
+
+        <i class="fa-solid fa-filter"></i>
+
+        Filter
+
+    </button>
+
+    <a href="/reports/stations" class="btn btn-secondary">
+
+        Clear
+
+    </a>
+
+</div>
+
+</form>
+
+<br>
+<div style="margin-bottom:20px;">
+
+    <a
+        href="/reports/stations/pdf?<%= new URLSearchParams(filters).toString() %>"
+        class="btn btn-danger">
+
+        <i class="fa-solid fa-file-pdf"></i>
+
+        Export PDF
+
+    </a>
+    
+
+    <a
+        href="/reports/stations/excel?<%= new URLSearchParams(filters).toString() %>"
+        class="btn btn-success">
+
+        <i class="fa-solid fa-file-excel"></i>
+
+        Export Excel
+
+    </a>
+
+</div>
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+    <th>Center</th>
+    <th>Station</th>
+    <th>Protocol</th>
+    <th>Media</th>
+    <th>Notes</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<% if(stations.length===0){ %>
+
+<tr>
+
+<td colspan="5">
+
+No stations found.
+
+</td>
+
+</tr>
+
+<% } %>
+
+<% stations.forEach(station=>{ %>
+
+<tr>
+
+<td>
+
+    <a href="/centers/<%= station.center_id %>">
+
+        <%= station.center_name %>
+
+    </a>
+
+</td>
+
+<td>
+
+    <a href="/stations/<%= station.id %>">
+
+        <%= station.name %>
+
+    </a>
+
+</td>
+
+<td>
+
+    <%= station.protocol %>
+
+</td>
+
+<td>
+
+    <%= station.media %>
+
+</td>
+
+<td><%= station.notes || "-" %></td>
+
+</tr>
+
+<% }) %>
+
+</tbody>
+
+</table>
