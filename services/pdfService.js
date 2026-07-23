@@ -290,51 +290,83 @@ function generateStationReport(
 
   let y = doc.y;
 
-  doc.font("Helvetica-Bold");
+  const COL = {
+    center: 40,
+    station: 120,
+    protocol: 240,
+    media: 320,
+    notes: 390,
+  };
 
-  doc.text("Center", 40, y, { width: 120 });
-  doc.text("Station", 170, y, { width: 150 });
-  doc.text("Protocol", 330, y, { width: 80 });
-  doc.text("Media", 430, y, { width: 90 });
+  doc.font("Helvetica-Bold").fontSize(10);
+
+  doc.text("Center", COL.center, y, { width: 70 });
+  doc.text("Station", COL.station, y, { width: 110 });
+  doc.text("Protocol", COL.protocol, y, { width: 70 });
+  doc.text("Media", COL.media, y, { width: 60 });
+  doc.text("Notes", COL.notes, y, { width: 150 });
 
   y += 18;
 
-  doc.moveTo(40, y).lineTo(550, y).stroke();
+  doc.moveTo(40, y).lineTo(555, y).stroke();
 
   y += 10;
 
-  doc.font("Helvetica");
+  doc.font("Helvetica").fontSize(9);
 
   stations.forEach((s) => {
-    if (y > 730) {
+    // Calculate required row height
+    const noteHeight = doc.heightOfString(s.notes || "-", {
+      width: 150,
+    });
+
+    const rowHeight = Math.max(20, noteHeight + 4);
+
+    if (y + rowHeight > 730) {
       doc.addPage();
 
       y = 50;
 
-      doc.font("Helvetica-Bold");
+      doc.font("Helvetica-Bold").fontSize(10);
 
-      doc.text("Center", 40, y, { width: 120 });
-      doc.text("Station", 170, y, { width: 150 });
-      doc.text("Protocol", 330, y, { width: 80 });
-      doc.text("Media", 430, y, { width: 90 });
+      doc.text("Center", COL.center, y, { width: 70 });
+      doc.text("Station", COL.station, y, { width: 110 });
+      doc.text("Protocol", COL.protocol, y, { width: 70 });
+      doc.text("Media", COL.media, y, { width: 60 });
+      doc.text("Notes", COL.notes, y, { width: 150 });
 
       y += 18;
 
-      doc.moveTo(40, y).lineTo(550, y).stroke();
+      doc.moveTo(40, y).lineTo(555, y).stroke();
 
       y += 10;
 
-      doc.font("Helvetica");
+      doc.font("Helvetica").fontSize(9);
     }
 
-    doc.text(s.center_name || "-", 40, y, { width: 120 });
-    doc.text(s.name || "-", 170, y, { width: 150 });
-    doc.text(s.protocol || "-", 330, y, { width: 80 });
-    doc.text(s.media || "-", 430, y, { width: 90 });
+    doc.text(s.center_name || "-", COL.center, y, {
+      width: 70,
+    });
 
-    y += 20;
+    doc.text(s.name || "-", COL.station, y, {
+      width: 110,
+    });
+
+    doc.text(s.protocol || "-", COL.protocol, y, {
+      width: 70,
+    });
+
+    doc.text(s.media || "-", COL.media, y, {
+      width: 60,
+    });
+
+    doc.text(s.notes || "-", COL.notes, y, {
+      width: 150,
+      align: "left",
+    });
+
+    y += rowHeight;
   });
-
   // ==========================================================
   // Summary Page
   // ==========================================================
