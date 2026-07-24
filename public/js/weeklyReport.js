@@ -1,66 +1,39 @@
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded", () => {
 
-const labels=[];
-const values=[];
+  if (!window.weeklyData || window.weeklyData.length === 0) {
+    return;
+  }
 
-window.weeklyData.forEach(day=>{
+  const labels = [];
+  const values = [];
 
-const d=new Date(day.date);
+  window.weeklyData.forEach((day) => {
+    labels.push(day.date);
+    values.push(Number((day.minutes / 60).toFixed(1)));
+  });
 
-labels.push(
+  const ctx = document.getElementById("weeklyChart");
 
-d.toLocaleDateString("en-US",{
-
-weekday:"short"
-
-})
-
-);
-
-values.push((day.minutes/60).toFixed(1));
-
-});
-
-new Chart(document.getElementById("weeklyChart"),{
-
-type:"bar",
-
-data:{
-
-labels,
-
-datasets:[{
-
-label:"Hours",
-
-data:values,
-
-backgroundColor:"#2563eb",
-
-borderRadius:8
-
-}]
-
-},
-
-options:{
-
-responsive:true,
-
-maintainAspectRatio:false,
-
-plugins:{
-
-legend:{
-
-display:false
-
-}
-
-}
-
-}
-
-});
-
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "Hours",
+          data: values,
+          backgroundColor: "#2563eb",
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
 });

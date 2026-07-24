@@ -1,0 +1,48 @@
+<div class="page-header">
+    <h1>Permission Management</h1>
+</div>
+
+<% roles.forEach(role=> { %>
+
+    <div class="card" style="margin-bottom:30px;">
+
+        <h3>
+            <%= role.name %>
+        </h3>
+
+        <form action="/permissions/<%= role.id %>" method="POST">
+
+            <div style="
+                display:grid;
+                grid-template-columns:repeat(3,1fr);
+                gap:12px;
+                margin-top:20px;
+            ">
+
+                <% permissions.forEach(permission=> { %>
+
+                    <label>
+
+                        <input type="checkbox" name="permissions" value="<%= permission.id %>"
+                            <%=role.permissions.includes(permission.id) ? "checked" : "" %>
+                        >
+
+                        <%= permission.name %>
+
+                    </label>
+
+                    <% }) %>
+
+            </div>
+
+            <br>
+
+            <button class="btn btn-primary">
+                Save Permissions
+            </button>
+
+        </form>
+
+    </div>
+
+    <% }) %>

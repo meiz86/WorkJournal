@@ -6,7 +6,7 @@
 
     <ul class="menu">
 
-        <% navigation.forEach(item => { %>
+        <% navigation.forEach(item=> { %>
 
             <li class="<%= currentPath === item.url ? 'active' : '' %>">
 
@@ -14,29 +14,17 @@
 
                     <i class="<%= item.icon %>"></i>
 
-                    <span><%= item.title %></span>
+                    <span>
+                        <%= item.title %>
+                    </span>
 
                 </a>
 
             </li>
 
-        <% }) %>
+            <% }) %>
 
-        <% if (user && user.role === "Admin") { %>
 
-            <li class="<%= currentPath.startsWith('/admin') ? 'active' : '' %>">
-
-                <a href="/admin">
-
-                    <i class="fas fa-users-cog"></i>
-
-                    <span>Administration</span>
-
-                </a>
-
-            </li>
-
-        <% } %>
 
     </ul>
 

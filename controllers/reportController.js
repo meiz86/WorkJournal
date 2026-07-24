@@ -59,11 +59,38 @@ exports.hardwareReport = (req, res) => {
 // =================================================
 
 exports.centerReport = (req, res) => {
-  res.render("reports/centers", {
-    title: "Center Report",
+  Report.getCenterReport((err, rows) => {
+    if (err) return res.send(err.message);
+
+    const medias = [...new Set(rows.map((r) => r.media).filter(Boolean))];
+
+    const centers = {};
+
+    rows.forEach((r) => {
+      if (!centers[r.center]) {
+        centers[r.center] = {
+          name: r.center,
+          total: 0,
+        };
+
+        medias.forEach((m) => {
+          centers[r.center][m] = 0;
+        });
+      }
+
+      if (r.media) {
+        centers[r.center][r.media] = r.stations;
+        centers[r.center].total += r.stations;
+      }
+    });
+
+    res.render("reports/centers", {
+      title: "Center Report",
+      medias,
+      report: Object.values(centers),
+    });
   });
 };
-
 // =================================================
 // Existing Reports
 // =================================================
@@ -125,6 +152,63 @@ exports.project = (req, res) => {
       });
     });
   });
+};
+exports.projectPDF = (req, res) => {
+  const projectId = req.query.project_id || "";
+
+  Report.getProjectReport(req.session.user.id, projectId, (err, report) => {
+    if (err) return res.send(err.message);
+
+    pdfService.generateReport(res, {
+      title: "Project Report",
+      rows: report,
+    });
+  });
+};
+exports.projectExcel = async (req, res) => {
+  const projectId = req.query.project_id || "";
+
+  Report.getProjectReport(
+    req.session.user.id,
+    projectId,
+    async (err, report) => {
+      if (err) return res.send(err.message);
+
+      const workbook = new ExcelJS.Workbook();
+      const sheet = workbook.addWorksheet("Project Report");
+
+      sheet.columns = [
+        { header: "Project", key: "project", width: 30 },
+        { header: "Activities", key: "activities", width: 15 },
+        { header: "Hours", key: "hours", width: 15 },
+        { header: "Completed", key: "completed", width: 15 },
+        { header: "Pending", key: "pending", width: 15 },
+      ];
+
+      report.forEach((r) => {
+        sheet.addRow({
+          project: r.project,
+          activities: r.activities,
+          hours: ((r.minutes || 0) / 60).toFixed(1),
+          completed: r.completed,
+          pending: r.pending,
+        });
+      });
+
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      );
+
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=project-report.xlsx",
+      );
+
+      await workbook.xlsx.write(res);
+      res.end();
+    },
+  );
 };
 
 exports.daily = (req, res) => {
@@ -435,5 +519,198 @@ exports.stationPDF = (req, res) => {
       protocolChart,
       mediaChart,
     );
+  });
+};
+exports.weeklyPDF = (req, res) => {
+  let week = req.query.week || "";
+
+  Report.getWeeklyReport(req.session.user.id, week, (err, report) => {
+    if (err) return res.send(err.message);
+
+    pdfService.generateReport(res, {
+      title: "Weekly Report",
+      rows: report,
+    });
+  });
+};
+exports.weeklyExcel = async (req, res) => {
+  let week = req.query.week || "";
+
+  Report.getWeeklyReport(req.session.user.id, week, async (err, report) => {
+    if (err) return res.send(err.message);
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Weekly Report");
+
+    sheet.columns = [
+      { header: "Date", key: "date", width: 20 },
+      { header: "Activities", key: "activities", width: 15 },
+      { header: "Minutes", key: "minutes", width: 15 },
+      { header: "Completed", key: "completed", width: 15 },
+      { header: "Pending", key: "pending", width: 15 },
+    ];
+
+    report.forEach((row) => sheet.addRow(row));
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=weekly-report.xlsx",
+    );
+
+    await workbook.xlsx.write(res);
+    res.end();
+  });
+};
+exports.monthlyPDF = (req, res) => {
+  const month = req.query.month || "";
+
+  Report.getMonthlyReport(req.session.user.id, month, (err, report) => {
+    if (err) return res.send(err.message);
+
+    pdfService.generateReport(res, {
+      title: "Monthly Report",
+      rows: report,
+    });
+  });
+};
+exports.monthlyExcel = async (req, res) => {
+  const month = req.query.month || "";
+
+  Report.getMonthlyReport(req.session.user.id, month, async (err, report) => {
+    if (err) return res.send(err.message);
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Monthly Report");
+
+    sheet.columns = [
+      { header: "Date", key: "date", width: 20 },
+      { header: "Activities", key: "activities", width: 15 },
+      { header: "Minutes", key: "minutes", width: 15 },
+      { header: "Completed", key: "completed", width: 15 },
+      { header: "Pending", key: "pending", width: 15 },
+    ];
+
+    report.forEach((row) => sheet.addRow(row));
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=monthly-report.xlsx",
+    );
+
+    await workbook.xlsx.write(res);
+    res.end();
+  });
+};
+// =================================================
+// Center Report PDF
+// =================================================
+
+exports.centerPDF = (req, res) => {
+  Report.getCenterMediaReport((err, report) => {
+    if (err) return res.send(err.message);
+    console.log(report);
+    pdfService.generateReport(res, {
+      title: "Center Report",
+      rows: report,
+    });
+  });
+};
+// =================================================
+// Center Report Excel
+// =================================================
+
+exports.centerExcel = async (req, res) => {
+  Report.getCenterMediaReport(async (err, report) => {
+    if (err) return res.send(err.message);
+
+    const workbook = new ExcelJS.Workbook();
+
+    const sheet = workbook.addWorksheet("Center Report");
+
+    sheet.columns = [
+      {
+        header: "Center",
+        key: "center",
+        width: 25,
+      },
+
+      {
+        header: "Stations",
+        key: "stations",
+        width: 12,
+      },
+
+      {
+        header: "Fiber",
+        key: "Fiber",
+        width: 12,
+      },
+
+      {
+        header: "Microwave",
+        key: "Microwave",
+        width: 12,
+      },
+
+      {
+        header: "PLC",
+        key: "PLC",
+        width: 12,
+      },
+
+      {
+        header: "Radio",
+        key: "Radio",
+        width: 12,
+      },
+
+      {
+        header: "Wireless",
+        key: "Wireless",
+        width: 12,
+      },
+
+      {
+        header: "Satellite",
+        key: "Satellite",
+        width: 12,
+      },
+    ];
+
+    report.forEach((row) => {
+      sheet.addRow(row);
+    });
+
+    sheet.getRow(1).font = {
+      bold: true,
+    };
+
+    sheet.getRow(1).alignment = {
+      horizontal: "center",
+    };
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=center-report.xlsx",
+    );
+
+    await workbook.xlsx.write(res);
+
+    res.end();
   });
 };

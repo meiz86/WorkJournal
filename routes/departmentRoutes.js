@@ -2,15 +2,50 @@ const express = require("express");
 const router = express.Router();
 
 const controller = require("../controllers/departmentController");
+const permissionMiddleware = require("../middleware/permissionMiddleware");
 
-router.get("/", controller.index);
+// ============================
+// Departments
+// ============================
 
-router.get("/new", controller.newForm);
-router.post("/new", controller.create);
+// List
+router.get(
+  "/",
+  permissionMiddleware.allowPermission("departments.view"),
+  controller.index
+);
 
-router.get("/edit/:id", controller.editForm);
-router.post("/edit/:id", controller.update);
+// Create
+router.get(
+  "/new",
+  permissionMiddleware.allowPermission("departments.create"),
+  controller.newForm
+);
 
-router.get("/delete/:id", controller.delete);
+router.post(
+  "/new",
+  permissionMiddleware.allowPermission("departments.create"),
+  controller.create
+);
+
+// Edit
+router.get(
+  "/edit/:id",
+  permissionMiddleware.allowPermission("departments.edit"),
+  controller.editForm
+);
+
+router.post(
+  "/edit/:id",
+  permissionMiddleware.allowPermission("departments.edit"),
+  controller.update
+);
+
+// Delete
+router.get(
+  "/delete/:id",
+  permissionMiddleware.allowPermission("departments.delete"),
+  controller.delete
+);
 
 module.exports = router;

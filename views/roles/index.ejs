@@ -1,0 +1,111 @@
+<div class="page-header">
+    <h1>Roles Management</h1>
+</div>
+
+<div class="card">
+
+    <h3>Add New Role</h3>
+
+    <form action="/roles/create" method="POST">
+
+        <div class="form-group">
+
+            <label>Role Name</label>
+
+            <input type="text" name="name" class="form-control" required>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Description</label>
+
+            <input type="text" name="description" class="form-control">
+
+        </div>
+
+        <button class="btn btn-primary">
+            Add Role
+        </button>
+
+    </form>
+
+</div>
+
+<div class="panel">
+
+    <table class="dashboard-table">
+
+        <thead>
+
+            <tr>
+
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <% if(roles.length===0){ %>
+
+                <tr>
+
+                    <td colspan="4">
+                        No roles found.
+                    </td>
+
+                </tr>
+
+                <% } %>
+
+                    <% roles.forEach(role=> { %>
+
+                        <tr>
+
+                            <td>
+                                <%= role.id %>
+                            </td>
+
+                            <td>
+                                <%= role.name %>
+                            </td>
+
+                            <td>
+                                <%= role.description || "-" %>
+                            </td>
+
+                            <td>
+
+                                <form action="/roles/update/<%= role.id %>" method="POST" style="display:inline-block">
+
+                                    <input type="text" name="name" value="<%= role.name %>">
+
+                                    <input type="text" name="description" value="<%= role.description || '' %>">
+
+                                    <button class="btn btn-warning">
+                                        Save
+                                    </button>
+
+                                </form>
+
+                                <a href="/roles/delete/<%= role.id %>" class="btn btn-danger"
+                                    onclick="return confirm('Delete this role?')">
+                                    Delete
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        <% }) %>
+
+        </tbody>
+
+    </table>
+
+</div>

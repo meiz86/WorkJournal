@@ -91,8 +91,81 @@ WHERE a.user_id = ?
 
   db.all(sql, params, callback);
 }
+// ============================
+// Get Activity By ID
+// ============================
+
+function getActivityById(id, userId, callback) {
+  const sql = `
+    SELECT *
+    FROM activities
+    WHERE id = ?
+      AND user_id = ?
+  `;
+
+  db.get(sql, [id, userId], callback);
+}
+
+// ============================
+// Update Activity
+// ============================
+
+function updateActivity(id, activity, userId, callback) {
+  const sql = `
+    UPDATE activities
+    SET
+      project_id = ?,
+      date = ?,
+      start_time = ?,
+      end_time = ?,
+      department_id = ?,
+      activity = ?,
+      description = ?,
+      duration = ?,
+      status = ?
+    WHERE id = ?
+      AND user_id = ?
+  `;
+
+  db.run(
+    sql,
+    [
+      activity.project_id,
+      activity.date,
+      activity.start_time,
+      activity.end_time,
+      activity.department_id,
+      activity.activity,
+      activity.description,
+      activity.duration,
+      activity.status,
+      id,
+      userId,
+    ],
+    callback,
+  );
+}
+
+// ============================
+// Delete Activity
+// ============================
+
+function deleteActivity(id, userId, callback) {
+  db.run(
+    `
+      DELETE FROM activities
+      WHERE id = ?
+      AND user_id = ?
+    `,
+    [id, userId],
+    callback,
+  );
+}
 
 module.exports = {
   createActivity,
   getActivities,
+  getActivityById,
+  updateActivity,
+  deleteActivity,
 };

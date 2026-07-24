@@ -19,12 +19,14 @@ const reportRoutes = require("./routes/reports");
 const exportRoutes = require("./routes/export");
 const calendarRoutes = require("./routes/calendar");
 const departmentRoutes = require("./routes/departmentRoutes");
-
 const requireLogin = require("./middleware/auth");
 const centerRoutes = require("./routes/centerRoutes");
 const stationRoutes = require("./routes/stationRoutes");
 const hardwareRoutes = require("./routes/hardwareRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
+const roleRoutes = require("./routes/roleRoutes");
+const userRoutes = require("./routes/userRoutes");
+const permissionRoutes = require("./routes/permissionRoutes");
 
 const PORT = 3000;
 
@@ -53,15 +55,49 @@ app.use(
   }),
 );
 
-// Global variables
+// ======================================
+// Global Variables
+// ======================================
+
 app.use((req, res, next) => {
-  res.locals.navigation = navigation;
+  let menu = [...navigation];
+
+  // Filter menu by permissions
+  if (req.session.user) {
+    const permissions = req.session.user.permissions || [];
+
+    menu = navigation.filter((item) => {
+      if (!item.permission) return true;
+
+      return permissions.includes(item.permission);
+    });
+  }
+
+  // Make user available in every EJS
+  res.locals.user = req.session.user;
+
+  // Navigation
+  res.locals.navigation = menu;
+
+  // Permission helper
+  res.locals.can = (permission) => {
+    const user = req.session.user;
+
+    if (!user) return false;
+
+    return (user.permissions || []).includes(permission);
+  };
+
+  // Current page
   res.locals.currentPath = req.path;
-  res.locals.user = req.session.user || null;
+
   next();
 });
 
-// Static files
+// ======================================
+// Static Files
+// ======================================
+
 app.use(express.static(path.join(__dirname, "public")));
 
 // ======================================
@@ -75,17 +111,38 @@ app.use("/", authRoutes);
 // ======================================
 
 app.use("/", requireLogin, dashboardRoutes);
+
 app.use("/activities", requireLogin, activityRoutes);
+
 app.use("/tasks", requireLogin, taskRoutes);
+
 app.use("/projects", requireLogin, projectRoutes);
+
 app.use("/reports", requireLogin, reportRoutes);
+
 app.use("/calendar", requireLogin, calendarRoutes);
+
 app.use("/export", requireLogin, exportRoutes);
+
 app.use("/departments", requireLogin, departmentRoutes);
+
 app.use("/centers", requireLogin, centerRoutes);
+
 app.use("/stations", requireLogin, stationRoutes);
-app.use("/centers/:centerId/hardware", requireLogin, hardwareRoutes);
-app.use("/settings", settingsRoutes);
+
+app.use("/users", requireLogin, userRoutes);
+
+app.use("/roles", requireLogin, roleRoutes);
+
+app.use("/permissions", requireLogin, permissionRoutes);
+
+app.use(
+  "/centers/:centerId/hardware",
+  requireLogin,
+  hardwareRoutes
+);
+
+app.use("/settings", requireLogin, settingsRoutes);
 
 // ======================================
 // Error Handling
@@ -102,17 +159,8 @@ app.use((err, req, res, next) => {
 
   res.status(500).render("errors/500", {
     title: "Server Error",
-
     error: process.env.NODE_ENV === "development" ? err : null,
   });
-});
-
-// ======================================
-// Server
-// ======================================
-
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
 });
 
 // ======================================

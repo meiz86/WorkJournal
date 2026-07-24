@@ -1,0 +1,118 @@
+<div class="page-header">
+    <h1>Center Report</h1>
+</div>
+
+<div class="stats-grid">
+
+    <div class="card">
+        <h3>Total Centers</h3>
+        <h1>
+            <%= report.length %>
+        </h1>
+    </div>
+
+    <div class="card">
+        <h3>Total Stations</h3>
+        <h1>
+            <%= report.reduce((t,c)=>t+(c.total||0),0) %>
+        </h1>
+    </div>
+
+</div>
+
+<div style="margin-bottom:20px;">
+
+    <a href="/reports/centers/pdf" class="btn btn-danger">
+        Export PDF
+    </a>
+
+    <a href="/reports/centers/excel" class="btn btn-success">
+        Export Excel
+    </a>
+
+</div>
+
+<div class="card chart-card">
+
+    <h3>Stations by Center</h3>
+
+    <canvas id="centerChart"></canvas>
+
+</div>
+
+<div class="panel">
+
+    <table class="dashboard-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Center</th>
+
+                <th>Total Stations</th>
+
+                <% medias.forEach(media=> { %>
+
+                    <th>
+                        <%= media %>
+                    </th>
+
+                    <% }) %>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <% if(report.length===0){ %>
+
+                <tr>
+
+                    <td colspan="<%= medias.length + 2 %>">
+                        No data available.
+                    </td>
+
+                </tr>
+
+                <% } else { %>
+
+                    <% report.forEach(center=> { %>
+
+                        <tr>
+
+                            <td>
+                                <%= center.name %>
+                            </td>
+
+                            <td>
+                                <%= center.total %>
+                            </td>
+
+                            <% medias.forEach(media=> { %>
+
+                                <td>
+                                    <%= center[media] || 0 %>
+                                </td>
+
+                                <% }) %>
+
+                        </tr>
+
+                        <% }) %>
+
+                            <% } %>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<script>
+window.centerData = <%- JSON.stringify(report) %>;
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/centerReport.js"></script>

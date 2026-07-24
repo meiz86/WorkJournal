@@ -1,17 +1,49 @@
 const express = require("express");
-
 const router = express.Router();
 
 const controller = require("../controllers/settingsController");
+const permissionMiddleware = require("../middleware/permissionMiddleware");
 
-router.get("/", controller.index);
+// ============================
+// View Settings
+// ============================
 
-router.get("/:category", controller.category);
+router.get(
+  "/",
+  permissionMiddleware.allowPermission("dashboard.view"),
+  controller.index
+);
 
-router.get("/:category/new", controller.newForm);
+router.get(
+  "/:category",
+  permissionMiddleware.allowPermission("dashboard.view"),
+  controller.category
+);
 
-router.post("/:category/new", controller.create);
+// ============================
+// Create
+// ============================
 
-router.get("/:category/delete/:id", controller.delete);
+router.get(
+  "/:category/new",
+  permissionMiddleware.allowPermission("roles.manage"),
+  controller.newForm
+);
+
+router.post(
+  "/:category/new",
+  permissionMiddleware.allowPermission("roles.manage"),
+  controller.create
+);
+
+// ============================
+// Delete
+// ============================
+
+router.get(
+  "/:category/delete/:id",
+  permissionMiddleware.allowPermission("roles.manage"),
+  controller.delete
+);
 
 module.exports = router;

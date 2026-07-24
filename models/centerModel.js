@@ -1,13 +1,11 @@
 const db = require("../database/db");
 
-
 // ============================
 // Get All Centers
 // ============================
 
 exports.getAll = (callback) => {
-
-    const sql = `
+  const sql = `
         SELECT
             id,
             name,
@@ -21,19 +19,15 @@ exports.getAll = (callback) => {
         ORDER BY name
     `;
 
-    db.all(sql, callback);
-
+  db.all(sql, callback);
 };
-
-
 
 // ============================
 // Get Center By ID
 // ============================
 
 exports.getById = (id, callback) => {
-
-    const sql = `
+  const sql = `
         SELECT
             id,
             name,
@@ -47,19 +41,15 @@ exports.getById = (id, callback) => {
         WHERE id = ?
     `;
 
-    db.get(sql, [id], callback);
-
+  db.get(sql, [id], callback);
 };
-
-
 
 // ============================
 // Create Center
 // ============================
 
 exports.create = (data, callback) => {
-
-    const sql = `
+  const sql = `
         INSERT INTO centers
         (
             name,
@@ -70,27 +60,15 @@ exports.create = (data, callback) => {
         VALUES (?,?,?)
     `;
 
-    db.run(
-        sql,
-        [
-            data.name,
-            data.acronym,
-            data.details
-        ],
-        callback
-    );
-
+  db.run(sql, [data.name, data.acronym, data.details], callback);
 };
-
-
 
 // ============================
 // Update Center
 // ============================
 
 exports.update = (id, data, callback) => {
-
-    const sql = `
+  const sql = `
         UPDATE centers
 
         SET
@@ -102,33 +80,23 @@ exports.update = (id, data, callback) => {
         WHERE id = ?
     `;
 
-    db.run(
-        sql,
-        [
-            data.name,
-            data.acronym,
-            data.details,
-            data.is_active,
-            id
-        ],
-        callback
-    );
-
+  db.run(
+    sql,
+    [data.name, data.acronym, data.details, data.is_active, id],
+    callback,
+  );
 };
-
-
 
 // ============================
 // Delete Center
 // ============================
 
 exports.remove = (id, callback) => {
-
-    const sql = `
+  const sql = `
         DELETE FROM centers
         WHERE id = ?
     `;
 
-    db.run(sql, [id], callback);
-
+  db.run(sql, [id], callback);
 };
+

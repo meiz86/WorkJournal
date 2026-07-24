@@ -1,0 +1,244 @@
+<div class="page-header">
+
+    <h1>User Management</h1>
+
+    <% if(can("users.edit")) { %>
+
+        <a href="/users/new" class="btn btn-primary">
+
+            <i class="fa-solid fa-user-plus"></i>
+
+            New User
+
+        </a>
+
+        <% } %>
+
+</div>
+
+
+<div class="panel">
+
+    <table class="dashboard-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Action</th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+
+            <% if(users.length===0) { %>
+
+                <tr>
+
+                    <td colspan="5" style="text-align:center;">
+
+                        No users found.
+
+                    </td>
+
+                </tr>
+
+
+                <% } else { %>
+
+
+
+                    <% users.forEach(user=> { %>
+
+
+                        <tr>
+
+
+                            <td>
+                                <%= user.name %>
+                            </td>
+
+
+                            <td>
+                                <%= user.email %>
+                            </td>
+
+
+
+                            <td>
+
+                                <form action="/users/update-role/<%= user.id %>" method="POST" style="display:inline;">
+
+
+                                    <select name="role_id" class="form-control" <%=user.id===locals.user.id ? "disabled"
+                                        : "" %>>
+
+
+                                        <% roles.forEach(role=> { %>
+
+                                            <option value="<%= role.id %>" <%=role.id===user.role_id ? "selected" : ""
+                                                %>>
+
+                                                <%= role.name %>
+
+                                            </option>
+
+
+                                            <% }) %>
+
+
+                                    </select>
+
+
+                            </td>
+
+
+
+                            <td>
+
+                                <% if(user.status==="Active" ) { %>
+
+
+                                    <span class="status-badge status-success">
+
+                                        Active
+
+                                    </span>
+
+
+                                    <% } else { %>
+
+
+                                        <span class="status-badge status-inactive">
+
+                                            Disabled
+
+                                        </span>
+
+
+                                        <% } %>
+
+
+                            </td>
+
+
+
+                            <td>
+
+
+                                <% if(can("users.edit")) { %>
+
+
+                                    <button class="btn btn-primary" <%=user.id===locals.user.id ? "disabled" : "" %>>
+
+                                        Save
+
+                                    </button>
+
+
+                                    <% } %>
+
+
+                                        </form>
+
+
+
+                                        <% if(can("users.edit")) { %>
+
+
+                                            <a href="/users/edit/<%= user.id %>" class="btn-edit" title="Edit">
+
+
+                                                <i class="fa-solid fa-pen"></i>
+
+
+                                            </a>
+                                            <!-- <% if(user.id !==locals.user.id) { %>
+                                                <form action="/users/delete/<%= user.id %>" method="POST" style="display:inline;">
+                                                         <button type="submit" class="btn-delete" onclick="return confirm('Delete this user?')">
+                                                            <i class="fa-solid fa-trash"></i>
+                                                         </button>
+                                                </form>
+                                              <% } %> -->
+                                                                                                  <% if(user.id !==locals.user.id) { %>
+
+
+                                                        <form action="/users/status/<%= user.id %>" method="POST"
+                                                            style="display:inline;">
+
+
+                                                            <% if(user.status==="Active" ) { %>
+
+
+                                                                <input type="hidden" name="status" value="Disabled">
+
+
+                                                                <button type="submit" class="btn-delete"
+                                                                    title="Disable User">
+
+
+                                                                    <i class="fa-solid fa-user-slash"></i>
+
+
+                                                                </button>
+
+
+
+                                                                <% } else { %>
+
+
+
+                                                                    <input type="hidden" name="status" value="Active">
+
+
+                                                                    <button type="submit" class="btn btn-success"
+                                                                        title="Enable User">
+
+
+                                                                        <i class="fa-solid fa-user-check"></i>
+
+
+                                                                    </button>
+
+
+                                                                    <% } %>
+
+
+                                                        </form>
+
+
+                                                        <% } %>
+
+
+
+                                                            <% } %>
+
+
+                            </td>
+
+
+                        </tr>
+
+
+                        <% }) %>
+
+
+
+                            <% } %>
+
+
+        </tbody>
+
+
+    </table>
+
+
+</div>

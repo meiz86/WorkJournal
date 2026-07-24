@@ -262,11 +262,7 @@ body {
   color: #1e293b;
 }
 
-.chart-card {
-  height: 280px;
-  min-height: 280px;
-  padding: 20px;
-}
+
 /* ===========================
    PANEL
 =========================== */
@@ -858,4 +854,12 @@ canvas {
 
 .error-icon.danger {
   color: #dc2626;
+}
+.chart-card {
+  height: 420px;
+}
+
+.chart-card canvas {
+  width: 100% !important;
+  height: 350px !important;
 }

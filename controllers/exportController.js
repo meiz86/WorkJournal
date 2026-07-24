@@ -43,7 +43,7 @@ exports.dailyPDF = (req, res) => {
 
     const startY = doc.y;
 
-    doc.font("Helvetica-Bold");
+    doc.font("Persian-Bold");
 
     doc.text("Date", 40, startY);
     doc.text("Project", 120, startY);
@@ -56,7 +56,7 @@ exports.dailyPDF = (req, res) => {
       .lineTo(560, startY + 15)
       .stroke();
 
-    doc.font("Helvetica");
+    doc.font("Persian");
 
     let y = startY + 25;
     let totalMinutes = 0;
@@ -84,7 +84,7 @@ exports.dailyPDF = (req, res) => {
 
     doc.moveDown(2);
 
-    doc.font("Helvetica-Bold");
+    doc.font("Persian-Bold");
 
     doc.text(`Total Activities: ${activities.length}`);
     doc.text(`Total Hours: ${(totalMinutes / 60).toFixed(1)}`);

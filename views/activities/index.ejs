@@ -18,9 +18,7 @@
 
     </div>
 
-    <a
-        href="/activities/new"
-        class="btn btn-primary">
+    <a href="/activities/new" class="btn btn-primary">
 
         <i class="fa-solid fa-plus"></i>
 
@@ -35,33 +33,33 @@
 <form method="GET" action="/activities">
 
     <div class="card">
-    <input type="text" name="search" placeholder="Search..." value="<%= filters.search || '' %>">
-  
+        <input type="text" name="search" placeholder="Search..." value="<%= filters.search || '' %>">
 
-    <select name="status">
 
-        <option value="All">All</option>
+        <select name="status">
 
-        <% statuses.forEach(status=> { %>
+            <option value="All">All</option>
 
-            <option value="<%= status %>" <%=filters.status===status ? "selected" : "" %>>
+            <% statuses.forEach(status=> { %>
 
-                <%= status %>
+                <option value="<%= status %>" <%=filters.status===status ? "selected" : "" %>>
 
-            </option>
+                    <%= status %>
 
-            <% }) %>
+                </option>
 
-    </select>
+                <% }) %>
 
-    <button type="submit">
-        Search
-    </button>
+        </select>
 
-    <a href="/activities">
-        Clear
-    </a>
-      </div>    
+        <button type="submit">
+            Search
+        </button>
+
+        <a href="/activities">
+            Clear
+        </a>
+    </div>
 
 </form>
 
@@ -78,6 +76,7 @@
         <th>Activity</th>
         <th>Duration</th>
         <th>Status</th>
+        <th width="140">Actions</th>
     </tr>
 
     <% activities.forEach(activity=> { %>
@@ -104,43 +103,50 @@
                 <%= activity.activity %>
             </td>
 
-          <%
+            <% const h=Math.floor(activity.duration/60); const m=activity.duration%60; %>
 
-const h=Math.floor(activity.duration/60);
+                <td>
 
-const m=activity.duration%60;
+                    <i class="fa-regular fa-clock"></i>
 
-%>
+                    <%= h>0 ? h+"h ":"" %><%= m %>m
 
-<td>
+                </td>
 
-<i class="fa-regular fa-clock"></i>
+                <td>
 
-<%= h>0 ? h+"h ":"" %><%= m %>m
+                    <% let badge="badge-warning" ; if(activity.status==="Completed" ) badge="badge-success" ;
+                        if(activity.status==="In Progress" ) badge="badge-primary" ; %>
 
-</td>
+                        <span class="badge <%= badge %>">
 
-          <td>
+                            <%= activity.status %>
 
-<%
+                        </span>
 
-let badge="badge-warning";
+                </td>
+                <td class="actions">
 
-if(activity.status==="Completed")
-badge="badge-success";
+                    <a href="/activities/<%= activity.id %>/edit" class="btn btn-sm btn-warning">
 
-if(activity.status==="In Progress")
-badge="badge-primary";
+                        <i class="fa-solid fa-pen"></i>
+                        Edit
 
-%>
+                    </a>
 
-<span class="badge <%= badge %>">
+                    <form action="/activities/<%= activity.id %>/delete" method="POST" style="display:inline;"
+                        onsubmit="return confirm('Delete this activity?');">
 
-<%= activity.status %>
+                        <button type="submit" class="btn btn-sm btn-danger">
 
-</span>
+                            <i class="fa-solid fa-trash"></i>
+                            Delete
 
-</td>
+                        </button>
+
+                    </form>
+
+                </td>
 
         </tr>
 

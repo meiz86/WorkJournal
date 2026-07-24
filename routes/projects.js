@@ -2,22 +2,68 @@ const express = require("express");
 const router = express.Router();
 
 const controller = require("../controllers/projectController");
+const permissionMiddleware = require("../middleware/permissionMiddleware");
 
-// List projects
-router.get("/", controller.index);
+// ============================
+// View Projects
+// ============================
 
-// Create
-router.get("/new", controller.newForm);
-router.post("/new", controller.create);
+router.get(
+  "/",
+  permissionMiddleware.allowPermission("projects.view"),
+  controller.index,
+);
 
-// Edit
-router.get("/edit/:id", controller.editForm);
-router.post("/edit/:id", controller.update);
+// ============================
+// Create Project
+// ============================
 
-// Delete (POST is safer than GET)
-router.post("/delete/:id", controller.delete);
+router.get(
+  "/new",
+  permissionMiddleware.allowPermission("projects.create"),
+  controller.newForm,
+);
 
-// Project dashboard
-router.get("/:id", controller.details);
+router.post(
+  "/new",
+  permissionMiddleware.allowPermission("projects.create"),
+  controller.create,
+);
+
+// ============================
+// Edit Project
+// ============================
+
+router.get(
+  "/edit/:id",
+  permissionMiddleware.allowPermission("projects.edit"),
+  controller.editForm,
+);
+
+router.post(
+  "/edit/:id",
+  permissionMiddleware.allowPermission("projects.edit"),
+  controller.update,
+);
+
+// ============================
+// Delete Project
+// ============================
+
+router.post(
+  "/delete/:id",
+  permissionMiddleware.allowPermission("projects.delete"),
+  controller.delete,
+);
+
+// ============================
+// Project Details
+// ============================
+
+router.get(
+  "/:id",
+  permissionMiddleware.allowPermission("projects.view"),
+  controller.details,
+);
 
 module.exports = router;

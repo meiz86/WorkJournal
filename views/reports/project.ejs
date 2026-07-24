@@ -25,7 +25,13 @@
     <button class="btn btn-primary">
         Generate
     </button>
+<a href="/reports/project/pdf?project_id=<%= projectId %>" class="btn btn-danger">
+    Export PDF
+</a>
 
+<a href="/reports/project/excel?project_id=<%= projectId %>" class="btn btn-success">
+    Export Excel
+</a>
 </form>
 
 <div class="stats-grid">
@@ -134,7 +140,7 @@
 
 <script>
 
-    window.projectData = <% - JSON.stringify(report) %>;
+    window.projectData = <%- JSON.stringify(report) %>;
 
 </script>
 

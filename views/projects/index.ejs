@@ -2,21 +2,21 @@
 
     <h1>Projects</h1>
 
-    <a href="/projects/new" class="btn btn-primary">
-        <i class="fa-solid fa-plus"></i>
-        New Project
-    </a>
+    <% if(user.permissions.includes("projects.create")) { %>
 
+        <a href="/projects/new" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i>
+            New Project
+        </a>
+
+        <% } %>
 </div>
 
 <div class="panel">
 
     <div class="table-toolbar">
 
-        <input
-            type="text"
-            id="projectSearch"
-            placeholder="Search projects...">
+        <input type="text" id="projectSearch" placeholder="Search projects...">
 
     </div>
 
@@ -37,95 +37,87 @@
 
         <tbody>
 
-        <% if (projects.length === 0) { %>
+            <% if (projects.length===0) { %>
 
-            <tr>
+                <tr>
 
-                <td colspan="6" style="text-align:center;">
-                    No projects found.
-                </td>
+                    <td colspan="6" style="text-align:center;">
+                        No projects found.
+                    </td>
 
-            </tr>
+                </tr>
 
-        <% } %>
+                <% } %>
 
-        <% projects.forEach(project => { %>
+                    <% projects.forEach(project=> { %>
 
-            <tr>
+                        <tr>
 
-                <td>
+                            <td>
 
-                    <span
-                        class="project-color"
-                        style="background:<%= project.color || '#2563eb' %>">
-                    </span>
+                                <span class="project-color" style="background:<%= project.color || '#2563eb' %>">
+                                </span>
 
-                    <a href="/projects/<%= project.id %>">
-                        <%= project.name %>
-                    </a>
+                                <a href="/projects/<%= project.id %>">
+                                    <%= project.name %>
+                                </a>
 
-                </td>
+                            </td>
 
-                <td>
-                    <%= project.client || "-" %>
-                </td>
+                            <td>
+                                <%= project.client || "-" %>
+                            </td>
 
-                <td>
+                            <td>
 
-                    <%
-                        let badge = "status-active";
+                                <% let badge="status-active" ; if(project.status==="On Hold" ) badge="status-warning" ;
+                                    if(project.status==="Completed" ) badge="status-success" ;
+                                    if(project.status==="Archived" ) badge="status-inactive" ; %>
 
-                        if(project.status === "On Hold")
-                            badge = "status-warning";
+                                    <span class="status-badge <%= badge %>">
+                                        <%= project.status %>
+                                    </span>
 
-                        if(project.status === "Completed")
-                            badge = "status-success";
+                            </td>
 
-                        if(project.status === "Archived")
-                            badge = "status-inactive";
-                    %>
+                            <td>
+                                <%= new Date(project.created_at).toLocaleDateString() %>
+                            </td>
 
-                    <span class="status-badge <%= badge %>">
-                        <%= project.status %>
-                    </span>
+                            <td>
+                                <%= project.end_date || "-" %>
+                            </td>
 
-                </td>
+                            <td>
 
-                <td>
-                    <%= new Date(project.created_at).toLocaleDateString() %>
-                </td>
+                                <% if(user.permissions.includes("projects.edit")) { %>
 
-                <td>
-                    <%= project.end_date || "-" %>
-                </td>
+                                    <a href="/projects/edit/<%= project.id %>" class="btn-edit" title="Edit">
 
-                <td>
+                                        <i class="fa-solid fa-pen"></i>
 
-                    <a
-                        href="/projects/edit/<%= project.id %>"
-                        class="btn-edit"
-                        title="Edit">
+                                    </a>
 
-                        <i class="fa-solid fa-pen"></i>
+                                    <% } %>
 
-                    </a>
+                                        <% if(user.permissions.includes("projects.delete")) { %>
 
-   <form action="/projects/delete/<%= project.id %>" method="POST" style="display:inline;">
-    <button
-        type="submit"
-        class="btn-delete"
-        onclick="return confirm('Delete this project?')">
+                                            <form action="/projects/delete/<%= project.id %>" method="POST"
+                                                style="display:inline;">
+                                                <button type="submit" class="btn-delete"
+                                                    onclick="return confirm('Delete this project?')">
 
-        <i class="fa-solid fa-trash"></i>
+                                                    <i class="fa-solid fa-trash"></i>
 
-    </button>
-</form>
+                                                </button>
+                                            </form>
+                                            <% } %>
 
-                </td>
+                            </td>
 
-            </tr>
+                        </tr>
 
-        <% }) %>
+                        <% }) %>
 
         </tbody>
 
@@ -135,20 +127,20 @@
 
 <script>
 
-const search = document.getElementById("projectSearch");
+    const search = document.getElementById("projectSearch");
 
-search.addEventListener("keyup", function () {
+    search.addEventListener("keyup", function () {
 
-    const value = this.value.toLowerCase();
+        const value = this.value.toLowerCase();
 
-    document.querySelectorAll(".dashboard-table tbody tr").forEach(row => {
+        document.querySelectorAll(".dashboard-table tbody tr").forEach(row => {
 
-        row.style.display = row.innerText.toLowerCase().includes(value)
-            ? ""
-            : "none";
+            row.style.display = row.innerText.toLowerCase().includes(value)
+                ? ""
+                : "none";
+
+        });
 
     });
-
-});
 
 </script>

@@ -42,3 +42,49 @@ exports.index = (req, res) => {
     });
   });
 };
+exports.editForm = (req, res) => {
+  Activity.getActivityById(
+    req.params.id,
+    req.session.user.id,
+    (err, activity) => {
+      if (err) return res.send(err.message);
+
+      Project.getAll(req.session.user.id, (err, projects) => {
+        if (err) return res.send(err.message);
+
+        Department.getAll((err, departments) => {
+          if (err) return res.send(err.message);
+
+          res.render("activities/edit", {
+            title: "Edit Activity",
+            activity,
+            statuses: STATUS,
+            projects,
+            departments,
+          });
+        });
+      });
+    },
+  );
+};
+
+exports.update = (req, res) => {
+  Activity.updateActivity(
+    req.params.id,
+    req.body,
+    req.session.user.id,
+    (err) => {
+      if (err) return res.send(err.message);
+
+      res.redirect("/activities");
+    },
+  );
+};
+
+exports.delete = (req, res) => {
+  Activity.deleteActivity(req.params.id, req.session.user.id, (err) => {
+    if (err) return res.send(err.message);
+
+    res.redirect("/activities");
+  });
+};
